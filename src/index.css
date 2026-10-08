@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #7b1113;
+  --color-primary-hover: #5c0d0f;
+  --color-primary-light: #fdf0f0;
+}
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  body {
+    @apply text-gray-900 antialiased;
+  }
+
+  * {
+    @apply border-gray-200;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-[#7b1113] ring-offset-2;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply cursor-pointer opacity-60 hover:opacity-100;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    @apply appearance-none m-0;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-[#7b1113] rounded-lg hover:bg-[#5c0d0f] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-[#7b1113] bg-white border border-[#7b1113] rounded-lg hover:bg-[#fdf0f0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-base {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:border-[#7b1113] transition-colors disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed;
+  }
+
+  .label-base {
+    @apply block text-sm font-medium text-gray-900 mb-1;
+  }
+
+  .card {
+    @apply bg-white border border-gray-200 rounded-xl;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
