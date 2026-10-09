@@ -1,19 +1,18 @@
-import { type TableHTMLAttributes } from 'react';
+import { type ReactNode } from 'react';
 
 interface Column<T> {
   key: string;
   header: string;
-  render?: (row: T, index: number) => React.ReactNode;
+  headerClassName?: string;
   className?: string;
+  render: (row: T, index: number) => ReactNode;
 }
 
-interface TableProps<T> extends TableHTMLAttributes<HTMLTableElement> {
+interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
   keyExtractor: (row: T) => string;
   emptyMessage?: string;
-  striped?: boolean;
-  hoverable?: boolean;
   className?: string;
 }
 
@@ -22,46 +21,40 @@ export function Table<T>({
   data,
   keyExtractor,
   emptyMessage = 'Nenhum registro encontrado',
-  striped = true,
-  hoverable = true,
   className = '',
-  ...props
 }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto">
-      <table className={`w-full text-sm text-left ${className}`} {...props}>
-        <thead className="bg-gray-50 border-b border-gray-200">
-          <tr>
+    <div className={`w-full overflow-x-auto ${className}`}>
+      <table className="w-full min-w-[640px] text-left text-sm">
+        <thead>
+          <tr className="border-b border-[#d8d8d8]">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`px-4 py-3 font-medium text-gray-500 uppercase tracking-wider ${col.className || ''}`}
+                scope="col"
+                className={`px-4 py-3 font-semibold text-[13px] uppercase tracking-wide text-[#595959] ${col.headerClassName ?? ''}`}
               >
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-[#e5e5e5]">
           {data.length === 0 ? (
             <tr>
-              <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
+              <td colSpan={columns.length} className="px-4 py-10 text-center text-[#595959]">
                 {emptyMessage}
               </td>
             </tr>
           ) : (
-            data.map((row, rowIndex) => (
+            data.map((row, index) => (
               <tr
                 key={keyExtractor(row)}
-                className={`
-                  ${striped && rowIndex % 2 === 1 ? 'bg-gray-50' : ''}
-                  ${hoverable ? 'hover:bg-gray-50' : ''}
-                  transition-colors
-                `}
+                className="hover:bg-[#fafafa] transition-colors"
               >
                 {columns.map((col) => (
-                  <td key={col.key} className={`px-4 py-3 ${col.className || ''}`}>
-                    {col.render ? col.render(row, rowIndex) : String((row as any)[col.key] ?? '')}
+                  <td key={col.key} className="px-4 py-3 align-middle">
+                    {col.render(row, index)}
                   </td>
                 ))}
               </tr>

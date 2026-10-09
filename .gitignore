@@ -51,6 +51,9 @@ desktop.ini
 *.swp
 *.swo
 
+# Arquivos temporários de desenvolvimento
+src/pages/public/RegisterPageVariants.tsx
+
 # OneDrive / sync conflicts
 ~$*
 *.tmp

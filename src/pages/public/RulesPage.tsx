@@ -1,54 +1,46 @@
-import { Clock, Shield, Users, AlertCircle, FileText, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { REFERENCE_DATE } from '../../domain/age';
 
 export function RulesPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
-      <div className="flex items-center gap-3 mb-4">
-        <Link to="/" className="p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Voltar">
-          <ArrowLeft className="h-5 w-5 text-gray-600" />
+      <div>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#595959] hover:text-[#1a1a1a] transition-colors"
+        >
+          ← Voltar para início
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Regras do Processo Seletivo</h1>
-          <p className="text-gray-500">CATI 2027 — Inscrições e Sorteios</p>
-        </div>
+        <h1 className="mt-4 text-3xl font-bold text-[#1a1a1a] tracking-tight">Regras do Processo Seletivo</h1>
+        <p className="mt-2 text-base text-[#3d3d3d]">Edital de Sorteio CATI 01/2027 — Inscrições e Sorteios.</p>
       </div>
 
-      <section className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Shield className="h-5 w-5 text-[#7b1113]" aria-hidden="true" />
-          Requisitos de Participação
+      <section className="border border-[#d8d8d8] rounded-lg bg-white" aria-labelledby="requisitos">
+        <h2 id="requisitos" className="px-6 py-4 text-lg font-semibold text-[#1a1a1a] border-b border-[#e5e5e5]">
+          Requisitos de participação
         </h2>
-        <ul className="space-y-3 text-gray-600">
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>Ter <strong>60 anos ou mais</strong> até a data de referência: <strong>{REFERENCE_DATE.toLocaleDateString('pt-BR')}</strong>.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>A idade é calculada considerando o dia, mês e ano de nascimento (não apenas a diferença de anos).</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>Pessoas com <strong>80 anos ou mais</strong> têm prioridade no sorteio.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>CPF válido e único por participante (a inscrição mais recente prevalece em caso de duplicidade).</span>
-          </li>
+        <ul className="px-6 py-5 space-y-4">
+          {[
+            'Ter 60 anos ou mais até a data de referência: 05/01/2027.',
+            'A idade é calculada considerando o dia, mês e ano de nascimento (não apenas a diferença de anos).',
+            'Pessoas com 80 anos ou mais têm prioridade no sorteio.',
+            'CPF válido e único por participante (a inscrição mais recente prevalece em caso de duplicidade).',
+          ].map((item) => (
+            <li key={item} className="flex gap-3 text-[0.9375rem] text-[#3d3d3d] leading-relaxed">
+              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#7b1113] mt-2" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
         </ul>
       </section>
 
-      <section className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Users className="h-5 w-5 text-[#7b1113]" aria-hidden="true" />
-          Grupos e Atividades
+      <section className="border border-[#d8d8d8] rounded-lg bg-white" aria-labelledby="grupos">
+        <h2 id="grupos" className="px-6 py-4 text-lg font-semibold text-[#1a1a1a] border-b border-[#e5e5e5]">
+          Grupos e atividades
         </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <article>
-            <h3 className="font-medium text-gray-900 mb-3 text-[#7b1113]">Grupo 1 — Atividades Físicas</h3>
-            <ul className="space-y-1 text-sm text-gray-600">
+        <div className="grid md:grid-cols-2 gap-px bg-[#e5e5e5]">
+          <div className="bg-white px-6 py-5">
+            <h3 className="text-base font-semibold text-[#7b1113]">Grupo 1 — Atividades Físicas</h3>
+            <ul className="mt-3 space-y-1.5 text-[0.9375rem] text-[#3d3d3d]">
               <li>Dança de Salão</li>
               <li>Dança Ritmos</li>
               <li>Ginástica</li>
@@ -58,83 +50,71 @@ export function RulesPage() {
               <li>Pilates Funcional</li>
               <li>Ginástica/Dance</li>
             </ul>
-          </article>
-          <article>
-            <h3 className="font-medium text-gray-900 mb-3 text-[#7b1113]">Grupo 2 — Atividades Socioeducativas</h3>
-            <ul className="space-y-1 text-sm text-gray-600">
+          </div>
+          <div className="bg-white px-6 py-5">
+            <h3 className="text-base font-semibold text-[#7b1113]">Grupo 2 — Atividades Socioeducativas</h3>
+            <ul className="mt-3 space-y-1.5 text-[0.9375rem] text-[#3d3d3d]">
               <li>Teatro</li>
               <li>Canto</li>
             </ul>
-          </article>
+          </div>
         </div>
-        <p className="text-sm text-gray-500">
-          O participante pode escolher <strong>uma atividade no Grupo 1</strong> e <strong>uma atividade no Grupo 2</strong>.
-          Os grupos são independentes — a classificação e lista de espera são separadas.
+        <p className="px-6 py-4 text-sm text-[#595959] border-t border-[#e5e5e5]">
+          O participante pode escolher uma atividade no Grupo 1 e uma atividade no Grupo 2.
+          Os grupos são independentes — a classificação e a lista de espera são separadas.
         </p>
       </section>
 
-      <section className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Clock className="h-5 w-5 text-[#7b1113]" aria-hidden="true" />
+      <section className="border border-[#d8d8d8] rounded-lg bg-white" aria-labelledby="cronograma">
+        <h2 id="cronograma" className="px-6 py-4 text-lg font-semibold text-[#1a1a1a] border-b border-[#e5e5e5]">
           Cronograma
         </h2>
-        <dl className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 rounded-lg">
-            <dt className="font-medium text-gray-900">Período de inscrições</dt>
-            <dd className="text-gray-600">01/01/2027 a 31/01/2027</dd>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 rounded-lg">
-            <dt className="font-medium text-gray-900">Homologação das inscrições</dt>
-            <dd className="text-gray-600">01/02/2027 a 04/02/2027</dd>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 rounded-lg">
-            <dt className="font-medium text-gray-900">Sorteio eletrônico</dt>
-            <dd className="text-gray-600">05/02/2027</dd>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 rounded-lg">
-            <dt className="font-medium text-gray-900">Divulgação dos resultados</dt>
-            <dd className="text-gray-600">A partir de 06/02/2027</dd>
-          </div>
+        <dl className="px-6 py-5 space-y-4">
+          {[
+            ['Período de inscrições', '01/01/2027 a 31/01/2027'],
+            ['Homologação das inscrições', '01/02/2027 a 04/02/2027'],
+            ['Sorteio eletrônico', '05/02/2027'],
+            ['Divulgação dos resultados', 'A partir de 06/02/2027'],
+          ].map(([dt, dd]) => (
+            <div key={dt} className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+              <dt className="text-[0.9375rem] font-medium text-[#1a1a1a]">{dt}</dt>
+              <dd className="text-[0.9375rem] text-[#3d3d3d]">{dd}</dd>
+            </div>
+          ))}
         </dl>
       </section>
 
-      <section className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <FileText className="h-5 w-5 text-[#7b1113]" aria-hidden="true" />
-          Regras do Sorteio
+      <section className="border border-[#d8d8d8] rounded-lg bg-white" aria-labelledby="regras-sorteio">
+        <h2 id="regras-sorteio" className="px-6 py-4 text-lg font-semibold text-[#1a1a1a] border-b border-[#e5e5e5]">
+          Regras do sorteio
         </h2>
-        <ul className="space-y-3 text-gray-600">
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>Apenas inscrições <strong>homologadas</strong> participam do sorteio.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>O sorteio é realizado por <strong>grupo</strong> (uma única ação para cada grupo).</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>Dentro de cada atividade, os candidatos são distribuídos nas turmas respeitando as vagas.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>Participantes com 80+ anos são sorteados <strong>antes</strong> dos demais (prioridade).</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>Quem não for classificado entra na <strong>lista de espera</strong> da atividade escolhida.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 text-[#7b1113]" aria-hidden="true" />
-            <span>A classificação é <strong>independente por grupo</strong> — um participante pode ser classificado em um grupo e em lista de espera no outro.</span>
-          </li>
+        <ul className="px-6 py-5 space-y-4">
+          {[
+            'Apenas inscrições homologadas participam do sorteio.',
+            'O sorteio é realizado por grupo (uma única ação para cada grupo).',
+            'Dentro de cada turma, os candidatos são distribuídos nas vagas existentes.',
+            'Participantes com 80+ anos são sorteados antes dos demais (prioridade).',
+            'Quem não for classificado entra na lista de espera da turma escolhida.',
+            'A classificação é independente por grupo — um participante pode ser classificado em um grupo e em lista de espera no outro.',
+          ].map((item) => (
+            <li key={item} className="flex gap-3 text-[0.9375rem] text-[#3d3d3d] leading-relaxed">
+              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#7b1113] mt-2" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
         </ul>
       </section>
 
       <div className="text-center">
-        <Link to="/inscricao" className="inline-flex items-center gap-2 px-6 py-2 bg-[#7b1113] text-white rounded-lg hover:bg-[#5c0d0f]">
+        <Link
+          to="/inscricao"
+          className="inline-flex items-center gap-2.5 min-h-[48px] px-8 py-3 text-base font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] active:bg-[#450a0c] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+        >
           Fazer Inscrição
         </Link>
+        <p className="mt-3 text-sm text-[#595959]">
+          Ou <Link to="/inscricao" className="font-medium text-[#7b1113] hover:underline">veja o formulário completo</Link>
+        </p>
       </div>
     </div>
   );

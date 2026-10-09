@@ -8,7 +8,7 @@ import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
-import { Badge, StatusBadge } from '../../components/ui/Badge';
+import { StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { exportRegistrationsCsv, downloadCsv } from '../../services/exportService';
@@ -63,49 +63,74 @@ export function RegistrationsPage() {
   };
 
   const columns = [
-    { key: 'name', header: 'Nome', render: (r: Registration) => <span className="font-medium">{r.participant.name}</span> },
-    { key: 'cpf', header: 'CPF', render: (r: Registration) => <code className="text-sm">{formatCpf(r.participant.cpf)}</code> },
-    { key: 'birthDate', header: 'Nascimento', render: (r: Registration) => r.participant.birthDate },
+    {
+      key: 'name',
+      header: 'Nome',
+      render: (r: Registration) => <p className="font-semibold text-[#1a1a1a]">{r.participant.name}</p>,
+    },
+    {
+      key: 'cpf',
+      header: 'CPF',
+      render: (r: Registration) => <code className="text-sm">{formatCpf(r.participant.cpf)}</code>,
+    },
+    {
+      key: 'birthDate',
+      header: 'Nascimento',
+      render: (r: Registration) => r.participant.birthDate,
+    },
     {
       key: 'groups',
-      header: 'Grupos',
+      header: 'Grupo(s)',
       render: (r: Registration) => (
-        <div className="flex gap-1">
-          {r.group1WorkshopId && <Badge variant="info" size="sm">G1</Badge>}
-          {r.group2WorkshopId && <Badge variant="success" size="sm">G2</Badge>}
+        <div className="flex gap-1.5">
+          {r.group1WorkshopId && <span className="text-xs font-semibold text-[#7b1113]">G1</span>}
+          {r.group2WorkshopId && <span className="text-xs font-semibold text-[#7b1113]">G2</span>}
         </div>
       ),
     },
-    { key: 'status', header: 'Status', render: (r: Registration) => <StatusBadge status={r.status} /> },
-    { key: 'createdAt', header: 'Criado em', render: (r: Registration) => new Date(r.createdAt).toLocaleString('pt-BR') },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (r: Registration) => <StatusBadge status={r.status} />,
+    },
+    {
+      key: 'createdAt',
+      header: 'Criada em',
+      render: (r: Registration) => new Date(r.createdAt).toLocaleString('pt-BR'),
+    },
     {
       key: 'actions',
       header: 'Ações',
       render: (r: Registration) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {r.status === 'pendente' && (
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
+            <>
+              <button
+                type="button"
+                className="w-10 h-10 flex items-center justify-center rounded-md text-[#1d6b2f] hover:bg-[#e9f4ec] transition-colors"
                 onClick={() => handleHomologate(r, 'homologada')}
                 aria-label={`Homologar inscrição de ${r.participant.name}`}
               >
-                <CheckCircle className="h-4 w-4 text-green-600" aria-hidden="true" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
+                <CheckCircle className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="w-10 h-10 flex items-center justify-center rounded-md text-[#a61b1b] hover:bg-[#fbeaea] transition-colors"
                 onClick={() => handleHomologate(r, 'nao_homologada')}
                 aria-label={`Não homologar inscrição de ${r.participant.name}`}
               >
-                <XCircle className="h-4 w-4 text-red-600" aria-hidden="true" />
-              </Button>
-            </div>
+                <XCircle className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </>
           )}
-          <Button variant="ghost" size="sm" onClick={() => setSelectedRegistration(r)} aria-label={`Ver detalhes de ${r.participant.name}`}>
-            <Eye className="h-4 w-4" aria-hidden="true" />
-          </Button>
+          <button
+            type="button"
+            className="w-10 h-10 flex items-center justify-center rounded-md text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a] transition-colors"
+            onClick={() => setSelectedRegistration(r)}
+            aria-label={`Ver detalhes de ${r.participant.name}`}
+          >
+            <Eye className="h-5 w-5" aria-hidden="true" />
+          </button>
         </div>
       ),
     },
@@ -115,64 +140,99 @@ export function RegistrationsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Inscrições</h1>
-          <p className="text-gray-500 mt-1">Gerencie e homologue as inscrições recebidas</p>
+          <h1 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Inscrições</h1>
+          <p className="mt-1 text-sm text-[#595959]">Gerencie e homologue as inscrições recebidas</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={handleExport} loading={exporting} leftIcon={<Download className="h-4 w-4" />}>
-            Exportar CSV
-          </Button>
-        </div>
+        <Button variant="secondary" onClick={handleExport} loading={exporting} leftIcon={<Download className="h-4 w-4" />}>
+          Exportar CSV
+        </Button>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Input
-            label="Buscar"
-            placeholder="Nome ou CPF"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1"
-          />
-          <Select
-            label="Status"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
-            options={[
-              { value: 'all', label: 'Todos' },
-              { value: 'pendente', label: 'Pendente' },
-              { value: 'homologada', label: 'Homologada' },
-              { value: 'nao_homologada', label: 'Não homologada' },
-            ]}
-            className="w-full sm:w-48"
-          />
-        </div>
-        <p className="text-sm text-gray-500">
-          Mostrando {filtered.length} de {registrations.length} inscrições ativas (duplicatas ignoradas)
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4 bg-[#fafafa] border border-[#d8d8d8] rounded-lg p-4">
+        <Input
+          label="Buscar"
+          placeholder="Nome ou CPF"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="sm:max-w-xs"
+        />
+        <Select
+          label="Status"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          options={[
+            { value: 'all', label: 'Todos' },
+            { value: 'pendente', label: 'Pendente' },
+            { value: 'homologada', label: 'Homologada' },
+            { value: 'nao_homologada', label: 'Não homologada' },
+          ]}
+          className="sm:max-w-xs"
+        />
+        <p className="text-sm text-[#595959]">
+          Mostrando <strong>{filtered.length}</strong> de <strong>{registrations.length}</strong> inscrições
         </p>
       </div>
 
-      <Table
-        columns={columns}
-        data={filtered}
-        keyExtractor={(r) => r.id}
-        emptyMessage="Nenhuma inscrição encontrada"
-        striped
-        hoverable
-      />
+      <div className="border border-[#d8d8d8] rounded-lg overflow-hidden bg-white">
+        <Table
+          columns={columns}
+          data={filtered}
+          keyExtractor={(r) => r.id}
+          emptyMessage="Nenhuma inscrição encontrada"
+        />
+      </div>
 
       {selectedRegistration && (
-        <Modal isOpen onClose={() => setSelectedRegistration(null)} title={`Detalhes: ${selectedRegistration.participant.name}`} size="lg">
-          <dl className="grid sm:grid-cols-2 gap-4 text-sm">
-            <div><dt className="text-gray-500">Nome</dt><dd className="font-medium">{selectedRegistration.participant.name}</dd></div>
-            <div><dt className="text-gray-500">CPF</dt><dd className="font-medium font-mono">{maskCpf(selectedRegistration.participant.cpf)}</dd></div>
-            <div><dt className="text-gray-500">Data de nascimento</dt><dd>{selectedRegistration.participant.birthDate}</dd></div>
-            <div><dt className="text-gray-500">Grupo 1</dt><dd>{selectedRegistration.group1WorkshopId ? getWorkshopById(selectedRegistration.group1WorkshopId)?.activityName ?? selectedRegistration.group1WorkshopId : '—'}</dd></div>
-            <div><dt className="text-gray-500">Grupo 2</dt><dd>{selectedRegistration.group2WorkshopId ? getWorkshopById(selectedRegistration.group2WorkshopId)?.activityName ?? selectedRegistration.group2WorkshopId : '—'}</dd></div>
-            <div><dt className="text-gray-500">Status</dt><dd><StatusBadge status={selectedRegistration.status} /></dd></div>
-            <div><dt className="text-gray-500">Criado em</dt><dd>{new Date(selectedRegistration.createdAt).toLocaleString('pt-BR')}</dd></div>
+        <Modal
+          isOpen
+          onClose={() => setSelectedRegistration(null)}
+          title={`Detalhes: ${selectedRegistration.participant.name}`}
+          size="lg"
+        >
+          <dl className="grid sm:grid-cols-2 gap-5 text-sm">
+            <div>
+              <dt className="font-medium text-[#595959]">Nome</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">{selectedRegistration.participant.name}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">CPF</dt>
+              <dd className="mt-0.5 font-mono font-semibold text-[#1a1a1a]">{maskCpf(selectedRegistration.participant.cpf)}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Data de nascimento</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">{selectedRegistration.participant.birthDate}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Grupo 1</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">
+                {selectedRegistration.group1WorkshopId
+                  ? getWorkshopById(selectedRegistration.group1WorkshopId)?.activityName ?? '—'
+                  : 'Não inscrito no Grupo 1'}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Grupo 2</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">
+                {selectedRegistration.group2WorkshopId
+                  ? getWorkshopById(selectedRegistration.group2WorkshopId)?.activityName ?? '—'
+                  : 'Não inscrito no Grupo 2'}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Status</dt>
+              <dd className="mt-1.5"><StatusBadge status={selectedRegistration.status} /></dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Criada em</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">{new Date(selectedRegistration.createdAt).toLocaleString('pt-BR')}</dd>
+            </div>
             {selectedRegistration.homologatedAt && (
-              <div><dt className="text-gray-500">Homologado em</dt><dd>{new Date(selectedRegistration.homologatedAt).toLocaleString('pt-BR')}</dd></div>
+              <div>
+                <dt className="font-medium text-[#595959]">Homologada em</dt>
+                <dd className="mt-0.5 font-semibold text-[#1a1a1a]">
+                  {new Date(selectedRegistration.homologatedAt).toLocaleString('pt-BR')}
+                </dd>
+              </div>
             )}
           </dl>
         </Modal>
@@ -184,10 +244,10 @@ export function RegistrationsPage() {
         onConfirm={executeHomologate}
         title={confirmAction === 'homologada' ? 'Homologar inscrição' : 'Não homologar inscrição'}
         message={confirmAction === 'homologada'
-          ? `Deseja homologar a inscrição de ${selectedRegistration?.participant.name}? Ela poderá participar do sorteio.`
+          ? `Deseja homologar a inscrição de ${selectedRegistration?.participant.name}? Esta inscrição poderá participar do sorteio.`
           : `Deseja marcar como não homologada a inscrição de ${selectedRegistration?.participant.name}? Ela não participará do sorteio.`}
         confirmText={confirmAction === 'homologada' ? 'Homologar' : 'Não homologar'}
-        variant={confirmAction === 'homologada' ? 'primary' : 'danger'}
+        variant={confirmAction === 'homologada' ? 'default' : 'danger'}
       />
     </div>
   );

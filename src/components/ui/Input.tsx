@@ -10,36 +10,39 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, helperText, fullWidth, className = '', id, ...props }, ref) => {
     const inputId = id || label.toLowerCase().replace(/\s+/g, '-');
+    const errorId = `${inputId}-error`;
+    const helperId = `${inputId}-helper`;
 
     return (
       <div className={`${fullWidth ? 'w-full' : ''} ${className}`}>
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-900 mb-1">
+        <label htmlFor={inputId} className="block text-[0.9375rem] font-semibold text-[#1a1a1a] mb-1.5">
           {label}
         </label>
         <input
           ref={ref}
           id={inputId}
           className={`
-            w-full px-3 py-2 border rounded-lg text-sm transition-colors
-            placeholder:text-gray-400
-            focus:outline-none focus:ring-2 focus:ring-offset-0
+            w-full px-3.5 py-3 border rounded-md text-base leading-snug
+            bg-white text-[#1a1a1a]
+            placeholder-[#595959]
+            transition-colors
+            disabled:bg-[#f4f4f4] disabled:text-[#595959] disabled:cursor-not-allowed
             ${error
-              ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-              : 'border-gray-300 focus:ring-[#7b1113] focus:border-[#7b1113]'
+              ? 'border-[#a61b1b] focus:outline-none focus:border-[#a61b1b] focus:shadow-[0_0_0_3px_rgb(166_27_27/0.15)]'
+              : 'border-[#b8b8b8] hover:border-[#595959] focus:outline-none focus:border-[#7b1113] focus:shadow-[0_0_0_3px_rgb(123_17_19/0.15)]'
             }
-            ${props.disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}
           `}
           aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
+          aria-describedby={error ? errorId : helperText ? helperId : undefined}
           {...props}
         />
         {error && (
-          <p id={`${inputId}-error`} className="mt-1 text-sm text-red-600" role="alert">
+          <p id={errorId} className="mt-1.5 text-sm font-medium text-[#a61b1b]" role="alert">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={`${inputId}-helper`} className="mt-1 text-sm text-gray-500">
+          <p id={helperId} className="mt-1.5 text-sm text-[#595959]">
             {helperText}
           </p>
         )}
@@ -60,36 +63,39 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, helperText, fullWidth, className = '', id, ...props }, ref) => {
     const inputId = id || label.toLowerCase().replace(/\s+/g, '-');
+    const errorId = `${inputId}-error`;
+    const helperId = `${inputId}-helper`;
 
     return (
       <div className={`${fullWidth ? 'w-full' : ''} ${className}`}>
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-900 mb-1">
+        <label htmlFor={inputId} className="block text-[0.9375rem] font-semibold text-[#1a1a1a] mb-1.5">
           {label}
         </label>
         <textarea
           ref={ref}
           id={inputId}
           className={`
-            w-full px-3 py-2 border rounded-lg text-sm transition-colors
-            placeholder:text-gray-400 resize-y min-h-[80px]
-            focus:outline-none focus:ring-2 focus:ring-offset-0
+            w-full px-3.5 py-3 border rounded-md text-base leading-snug min-h-[96px] resize-y
+            bg-white text-[#1a1a1a]
+            placeholder-[#595959]
+            transition-colors
+            disabled:bg-[#f4f4f4] disabled:text-[#595959] disabled:cursor-not-allowed
             ${error
-              ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-              : 'border-gray-300 focus:ring-[#7b1113] focus:border-[#7b1113]'
+              ? 'border-[#a61b1b] focus:outline-none focus:border-[#a61b1b] focus:shadow-[0_0_0_3px_rgb(166_27_27/0.15)]'
+              : 'border-[#b8b8b8] hover:border-[#595959] focus:outline-none focus:border-[#7b1113] focus:shadow-[0_0_0_3px_rgb(123_17_19/0.15)]'
             }
-            ${props.disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}
           `}
           aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
+          aria-describedby={error ? errorId : helperText ? helperId : undefined}
           {...props}
         />
         {error && (
-          <p id={`${inputId}-error`} className="mt-1 text-sm text-red-600" role="alert">
+          <p id={errorId} className="mt-1.5 text-sm font-medium text-[#a61b1b]" role="alert">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={`${inputId}-helper`} className="mt-1 text-sm text-gray-500">
+          <p id={helperId} className="mt-1.5 text-sm text-[#595959]">
             {helperText}
           </p>
         )}

@@ -9,31 +9,51 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   leftIcon?: React.ReactElement;
 }
 
+const variantClasses: Record<string, string> = {
+  primary: 'bg-[#7b1113] text-white hover:bg-[#5c0d0f] active:bg-[#450a0c]',
+  secondary: 'bg-white text-[#7b1113] border border-[#7b1113] hover:bg-[#fdf0f0]',
+  danger: 'bg-[#a61b1b] text-white hover:bg-[#8a1616]',
+  ghost: 'text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a]',
+};
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', loading, fullWidth, disabled, children, className = '', leftIcon, ...props }, ref) => {
-    const base = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
-
-    const variants = {
-      primary: 'bg-[#7b1113] text-white hover:bg-[#5c0d0f] focus:ring-[#7b1113]',
-      secondary: 'bg-white text-[#7b1113] border border-[#7b1113] hover:bg-[#fdf0f0] focus:ring-[#7b1113]',
-      danger: 'bg-[#b91c1c] text-white hover:bg-[#991b1b] focus:ring-[#b91c1c]',
-      ghost: 'text-[#374151] hover:bg-gray-100 focus:ring-gray-400',
-    };
-
-    const sizes = {
-      sm: 'px-3 py-1.5 text-sm gap-1.5',
-      md: 'px-4 py-2 text-sm gap-2',
-      lg: 'px-6 py-3 text-base gap-2',
+  (
+    {
+      variant = 'primary',
+      size = 'md',
+      loading,
+      fullWidth,
+      disabled,
+      children,
+      className = '',
+      leftIcon,
+      ...props
+    },
+    ref,
+  ) => {
+    const sizeClasses = {
+      sm: 'min-h-[36px] px-3 py-1.5 text-sm gap-1.5',
+      md: 'min-h-[44px] px-5 py-2.5 text-[0.9375rem] gap-2',
+      lg: 'min-h-[48px] px-6 py-3 text-base gap-2.5',
     };
 
     return (
-<button
+      <button
         ref={ref}
-        className={`${base} ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
+        className={`
+          inline-flex items-center justify-center font-semibold rounded-md
+          transition-colors
+          disabled:opacity-55 disabled:cursor-not-allowed
+          ${variantClasses[variant]}
+          ${sizeClasses[size]}
+          ${fullWidth ? 'w-full' : ''}
+          ${className}
+        `}
         disabled={disabled || loading}
         {...props}
       >
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : leftIcon}
+        {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+        {leftIcon && !loading && leftIcon}
         {children}
       </button>
     );

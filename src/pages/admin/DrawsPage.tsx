@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Shuffle, AlertCircle, CheckCircle, Clock, Loader2, ArrowRight } from 'lucide-react';
+import { Shuffle, AlertCircle, CheckCircle, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import { performDraw, isDrawInProgress, getDrawResult, hasDrawResult, clearDrawResult } from '../../services/drawService';
 import { Button } from '../../components/ui/Button';
 import { Badge, StatusBadge } from '../../components/ui/Badge';
@@ -34,89 +34,98 @@ export function DrawsPage() {
   const executeClear = () => { if (confirmClear) { clearDrawResult(confirmClear); setConfirmClear(null); } };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Realizar Sorteios</h1>
-        <p className="text-gray-500 mt-1">Execute o sorteio eletrônico para cada grupo</p>
+        <h1 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Realizar Sorteios</h1>
+        <p className="mt-1 text-sm text-[#595959]">Execute o sorteio eletrônico para cada grupo</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-px bg-[#d8d8d8] border border-[#d8d8d8] rounded-lg overflow-hidden">
         {([1, 2] as const).map((groupId) => {
           const result = getDrawResult(groupId);
           const done = hasDrawResult(groupId);
           const isDrawing = drawing === groupId;
 
           return (
-            <article key={groupId} className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">{GROUP_LABELS[groupId]}</h2>
+            <article key={groupId} className="bg-white flex flex-col min-h-[260px]">
+              <div className="px-5 py-4 border-b border-[#e5e5e5] flex items-center justify-between">
+                <h2 className="text-base font-semibold text-[#1a1a1a]">{GROUP_LABELS[groupId]}</h2>
                 <StatusBadge status={done ? 'ativa' : 'inativa'} />
               </div>
 
-              <p className="text-gray-600 text-sm">
-                {done
-                  ? `Sorteio realizado em ${new Date(result!.drawnAt).toLocaleString('pt-BR')}. ${result!.totalClassified} classificados, ${result!.totalWaiting} em espera.`
-                  : 'Aguardando homologação das inscrições e execução do sorteio.'}
-              </p>
+              <div className="flex-1 px-5 py-4 flex flex-col justify-between">
+                <div>
+                  <p className="text-sm text-[#595959]">
+                    {done
+                      ? `Sorteio realizado em ${new Date(result!.drawnAt).toLocaleString('pt-BR')}.`
+                      : 'Aguardando homologação das inscrições e execução do sorteio.'}
+                  </p>
 
-              {done && (
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="p-3 bg-gray-50 rounded-lg"><p className="text-gray-500">Candidatos</p><p className="font-bold text-lg">{result!.totalCandidates}</p></div>
-                  <div className="p-3 bg-green-50 rounded-lg"><p className="text-gray-500">Classificados</p><p className="font-bold text-lg text-green-600">{result!.totalClassified}</p></div>
-                  <div className="p-3 bg-amber-50 rounded-lg"><p className="text-gray-500">Lista de espera</p><p className="font-bold text-lg text-amber-600">{result!.totalWaiting}</p></div>
-                </div>
-              )}
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-<Button
-                  variant={isDrawing ? 'secondary' : 'primary'}
-                  size="lg"
-                  fullWidth
-                  onClick={() => handleDraw(groupId)}
-                  disabled={inProgress || isDrawing}
-                  leftIcon={isDrawing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Shuffle className="h-4 w-4" />}
-                >
-                  {isDrawing ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-                      Processando... ~2s
-                    </span>
-                  ) : done ? (
-                    'Refazer Sorteio'
-                  ) : (
-                    'Realizar Sorteio'
+                  {done && result && (
+                    <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+                      <div className="p-3 bg-[#f4f4f4] rounded">
+                        <p className="text-xs font-medium text-[#595959]">Candidatos</p>
+                        <p className="text-xl font-bold text-[#1a1a1a]">{result.totalCandidates}</p>
+                      </div>
+                      <div className="p-3 bg-[#e9f4ec] rounded">
+                        <p className="text-xs font-medium text-[#1d6b2f]">Classificados</p>
+                        <p className="text-xl font-bold text-[#1d6b2f]">{result.totalClassified}</p>
+                      </div>
+                      <div className="p-3 bg-[#fbf3e0] rounded">
+                        <p className="text-xs font-medium text-[#8a5a00]">Em espera</p>
+                        <p className="text-xl font-bold text-[#8a5a00]">{result.totalWaiting}</p>
+                      </div>
+                    </div>
                   )}
-                </Button>
 
-                {done && (
-                  <>
-                    <Button variant="secondary" fullWidth onClick={() => setShowResult(groupId)} leftIcon={<ArrowRight className="h-4 w-4" />}>
-                      Ver Resultado
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleClear(groupId)} className="text-red-600 hover:bg-red-50">
-                      Limpar resultado
-                    </Button>
-                  </>
-                )}
-              </div>
-
-              {!done && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700">
-                  <AlertCircle className="h-4 w-4 inline mr-1" aria-hidden="true" />
-                  Certifique-se de que as inscrições estejam homologadas antes de realizar o sorteio.
+                  {!done && (
+                    <div className="mt-4 flex gap-2.5 p-3 bg-[#fbf3e0] border border-[#e8d9b0] rounded-lg">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0 text-[#8a5a00] mt-0.5" aria-hidden="true" />
+                      <p className="text-sm text-[#3d3d3d]">Apenas inscrições homologadas participam do sorteio.</p>
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <div className="mt-5 space-y-2.5">
+                  <Button
+                    variant={done ? 'secondary' : 'primary'}
+                    fullWidth
+                    onClick={() => handleDraw(groupId)}
+                    disabled={inProgress || isDrawing}
+                    leftIcon={isDrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shuffle className="h-4 w-4" />}
+                  >
+                    {isDrawing ? 'Processando… (~2s)' : done ? 'Refazer Sorteio' : 'Realizar Sorteio'}
+                  </Button>
+                  {done && (
+                    <div className="flex gap-2.5">
+                      <Button variant="ghost" size="sm" fullWidth onClick={() => setShowResult(groupId)} leftIcon={<ArrowRight className="h-4 w-4" />}>
+                        Ver Resultado
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleClear(groupId)}
+                        className="text-[#a61b1b] hover:bg-[#fbeaea]"
+                      >
+                        Limpar
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </article>
           );
         })}
       </div>
 
       {showResult && (
-        <Modal isOpen onClose={() => setShowResult(null)} title={`Resultado do Sorteio — ${GROUP_LABELS[showResult]}`} size="xl">
-          <div className="space-y-6 max-h-[70vh] overflow-y-auto">
-            <p className="text-sm text-gray-500">Sorteio realizado em {new Date(getDrawResult(showResult)!.drawnAt).toLocaleString('pt-BR')}</p>
-            <ResultsView groupId={showResult} />
-          </div>
+        <Modal
+          isOpen
+          onClose={() => setShowResult(null)}
+          title={`Resultado do Sorteio — ${GROUP_LABELS[showResult]}`}
+          size="lg"
+        >
+          <DrawResultContent groupId={showResult} />
         </Modal>
       )}
 
@@ -133,81 +142,104 @@ export function DrawsPage() {
   );
 }
 
-function ResultsView({ groupId }: { groupId: 1 | 2 }) {
+function DrawResultContent({ groupId }: { groupId: 1 | 2 }) {
   const result = getDrawResult(groupId);
-  if (!result) return null;
+  if (!result) return <p className="text-sm text-[#595959]">Resultado não disponível.</p>;
 
   return (
     <div className="space-y-6">
-      {result.workshops.map((workshop) => (
-        <article key={workshop.workshopId} className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <h3 className="font-semibold text-gray-900">{workshop.activityName}</h3>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>{workshop.days} às {workshop.startTime}</span>
-              <span>Prof. {workshop.professor}</span>
-              <span>Vagas: <strong>{workshop.vacancies}</strong></span>
+      <div className="flex flex-wrap gap-6 text-sm">
+        <p><span className="font-semibold text-[#1a1a1a]">Realizado em:</span> <span className="text-[#3d3d3d]">{new Date(result.drawnAt).toLocaleString('pt-BR')}</span></p>
+        <p><span className="font-semibold text-[#1a1a1a]">Candidatos:</span> <span className="text-[#3d3d3d]">{result.totalCandidates}</span></p>
+        <p><span className="font-semibold text-[#1d6b2f]">Classificados:</span> <span className="text-[#3d3d3d]">{result.totalClassified}</span></p>
+        <p><span className="font-semibold text-[#8a5a00]">Lista de espera:</span> <span className="text-[#3d3d3d]">{result.totalWaiting}</span></p>
+      </div>
+
+      <div className="space-y-5">
+        <h3 className="text-base font-semibold text-[#1a1a1a]">Turmas</h3>
+        {result.workshops.map((workshop) => (
+          <article key={workshop.workshopId} className="border border-[#d8d8d8] rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 bg-[#fafafa] border-b border-[#e5e5e5]">
+              <h4 className="text-base font-semibold text-[#1a1a1a]">{workshop.activityName}</h4>
+              <div className="flex items-center gap-4 text-xs text-[#595959] shrink-0">
+                <span>{workshop.days} • {workshop.startTime}</span>
+                <span>Prof. {workshop.professor}</span>
+                <span>Vagas: <strong className="text-[#1a1a1a]">{workshop.vacancies}</strong></span>
+              </div>
             </div>
-          </div>
 
-          {workshop.classified.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium text-green-700 mb-2 flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" /> Classificados ({workshop.classified.length})
-              </h4>
-              <ol className="space-y-1 max-h-40 overflow-y-auto">
-                {workshop.classified.map((entry) => (
-                  <li key={entry.registrationId} className="flex items-center gap-2 text-sm text-gray-700 py-1 px-2 bg-green-50 rounded">
-                    <span className="font-mono text-gray-400 w-8">{entry.position}.</span>
-                    <span className="font-medium">{entry.participantName}</span>
-                    {entry.isPriority80 && <Badge variant="warning" size="sm">80+</Badge>}
-                  </li>
-                ))}
-              </ol>
+            <div className="grid sm:grid-cols-2 gap-px bg-[#e5e5e5]">
+              {workshop.classified.length > 0 ? (
+                <div className="bg-white p-4">
+                  <h5 className="text-sm font-semibold text-[#1d6b2f] mb-3 flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" aria-hidden="true" /> Classificados <span className="font-normal text-[#595959]">({workshop.classified.length}/{workshop.vacancies})</span>
+                  </h5>
+                  <ol className="space-y-1.5 max-h-56 overflow-y-auto">
+                    {workshop.classified.map((entry) => (
+                      <li key={entry.registrationId} className="flex items-center gap-2 text-sm text-[#1a1a1a] py-1.5 px-2 bg-[#f9f9f9] rounded">
+                        <span className="w-6 font-mono text-[#595959] flex-shrink-0">{entry.position}.</span>
+                        <span className="min-w-0 truncate font-medium">{entry.participantName}</span>
+                        {entry.isPriority80 && <Badge variant="primary" className="flex-shrink-0">80+</Badge>}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ) : (
+                <div className="bg-white p-4 flex items-center justify-center">
+                  <p className="text-sm text-[#595959]">Nenhum classificado</p>
+                </div>
+              )}
+
+              {workshop.waitingList.length > 0 ? (
+                <div className="bg-white p-4">
+                  <h5 className="text-sm font-semibold text-[#8a5a00] mb-3 flex items-center gap-2">
+                    <Clock className="h-4 w-4" aria-hidden="true" /> Lista de espera <span className="font-normal text-[#595959]">({workshop.waitingList.length})</span>
+                  </h5>
+                  <ol className="space-y-1.5 max-h-56 overflow-y-auto">
+                    {workshop.waitingList.map((entry) => (
+                      <li key={entry.registrationId} className="flex items-center gap-2 text-sm text-[#1a1a1a] py-1.5 px-2 bg-[#f9f9f9] rounded">
+                        <span className="w-6 font-mono text-[#595959] flex-shrink-0">{entry.position}.</span>
+                        <span className="min-w-0 truncate font-medium">{entry.participantName}</span>
+                        {entry.isPriority80 && <Badge variant="primary" className="flex-shrink-0">80+</Badge>}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ) : (
+                <div className="bg-white p-4 flex items-center justify-center">
+                  <p className="text-sm text-[#595959]">Nenhum em espera</p>
+                </div>
+              )}
             </div>
-          )}
+          </article>
+        ))}
+      </div>
 
-          {workshop.waitingList.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium text-amber-700 mb-2 flex items-center gap-1">
-                <Clock className="h-4 w-4" /> Lista de Espera ({workshop.waitingList.length})
-              </h4>
-              <ol className="space-y-1 max-h-40 overflow-y-auto">
-                {workshop.waitingList.map((entry) => (
-                  <li key={entry.registrationId} className="flex items-center gap-2 text-sm text-gray-700 py-1 px-2 bg-amber-50 rounded">
-                    <span className="font-mono text-gray-400 w-8">{entry.position}.</span>
-                    <span className="font-medium">{entry.participantName}</span>
-                    {entry.isPriority80 && <Badge variant="warning" size="sm">80+</Badge>}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {workshop.classified.length === 0 && workshop.waitingList.length === 0 && (
-            <p className="text-sm text-gray-500 text-center py-4">Nenhum candidato para esta turma</p>
-          )}
-        </article>
-      ))}
-
-      <div className="pt-4 border-t border-gray-200">
-        <h3 className="font-medium text-gray-900 mb-3">Classificação Geral do Grupo</h3>
-        <div className="overflow-x-auto">
+      <article className="border border-[#d8d8d8] rounded-lg overflow-hidden">
+        <div className="px-4 py-3 bg-[#fafafa] border-b border-[#e5e5e5]">
+          <h4 className="text-base font-semibold text-[#1a1a1a]">Classificação Geral do Grupo</h4>
+        </div>
+        <div className="overflow-x-auto max-h-96 overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50"><tr><th className="text-left py-2 px-3">Posição</th><th className="text-left py-2 px-3">Inscrição</th></tr></thead>
-            <tbody className="divide-y divide-gray-200">
+            <thead className="bg-white border-b border-[#e5e5e5]">
+              <tr>
+                <th className="text-left px-4 py-2.5 font-semibold text-[#595959]">Posição</th>
+                <th className="text-left px-4 py-2.5 font-semibold text-[#595959]">Inscrição</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#e5e5e5]">
               {Object.entries(result.groupClassification)
                 .sort(([, a], [, b]) => a - b)
                 .map(([regId, pos]) => (
-                  <tr key={regId} className="hover:bg-gray-50">
-                    <td className="py-2 px-3 font-mono text-gray-400">{pos}</td>
-                    <td className="py-2 px-3">{regId}</td>
+                  <tr key={regId} className="hover:bg-[#fafafa]">
+                    <td className="px-4 py-2.5 font-mono text-[#595959]">{pos}</td>
+                    <td className="px-4 py-2.5 text-[#1a1a1a]">{regId}</td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
-      </div>
+      </article>
     </div>
   );
 }

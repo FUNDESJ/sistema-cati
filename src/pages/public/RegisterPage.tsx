@@ -68,15 +68,14 @@ function GroupSelector({
   }));
 
   return (
-    <div className="space-y-5 p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-200">
-      <h3 id={`group${groupId}-title`} className="text-base font-semibold text-gray-900">{GROUP_LABELS[groupId]}</h3>
+    <div className="space-y-5 p-5 bg-[#fafafa] border border-[#d8d8d8] rounded-lg">
+      <h3 className="text-base font-semibold text-[#1a1a1a]">{GROUP_LABELS[groupId]}</h3>
 
       <div>
-        <p id={`${activitySelectId}-step`} className="text-sm font-medium text-gray-700 mb-2">
-          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#7b1113] text-white text-sm font-semibold mr-2" aria-hidden="true">1</span>
+        <p className="text-base font-medium text-[#1a1a1a] mb-1.5">
           Escolha uma atividade
         </p>
-        <Select
+<Select
           id={activitySelectId}
           label=""
           placeholder="Selecione uma atividade"
@@ -85,41 +84,39 @@ function GroupSelector({
           onChange={(e) => onActivityChange(e.target.value || null)}
           error={activityError}
           className="text-base py-3"
-          aria-labelledby={`group${groupId}-title ${activitySelectId}-step`}
+          aria-labelledby={`group${groupId}-title ${activitySelectId}-label`}
         />
       </div>
 
       <div>
-        <p id={`${workshopSelectId}-step`} className="text-sm font-medium text-gray-700 mb-2">
-          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#7b1113] text-white text-sm font-semibold mr-2" aria-hidden="true">2</span>
+        <p className="text-base font-medium text-[#1a1a1a] mb-1.5" id={`${workshopSelectId}-step`}>
           Escolha o dia e horário
         </p>
         <Select
           id={workshopSelectId}
           label=""
           placeholder={hasNoWorkshops ? 'Nenhuma turma disponível' : activityId ? 'Selecione o dia e horário' : 'Escolha uma atividade primeiro'}
-          options={hasNoWorkshops ? [{ value: '', label: 'Nenhuma turma disponível para esta atividade' }] : workshopOptions}
+          options={hasNoWorkshops ? [{ value: '', label: 'Nenhuma turma disponível para esta atividade', disabled: true }] : workshopOptions}
           value={workshopId ?? ''}
           onChange={(e) => onWorkshopChange(e.target.value || null)}
           disabled={activityId === null || hasNoWorkshops}
           className="text-base py-3"
-          aria-labelledby={`group${groupId}-title ${workshopSelectId}-step`}
           aria-describedby={activityId === null ? `${workshopSelectId}-hint` : undefined}
         />
         {activityId === null && (
-          <p id={`${workshopSelectId}-hint`} className="mt-1.5 text-sm text-gray-500">
+          <p id={`${workshopSelectId}-hint`} className="mt-1.5 text-sm text-[#595959]">
             É necessário escolher uma atividade primeiro.
           </p>
         )}
         {hasNoWorkshops && (
-          <p className="mt-1.5 text-sm text-amber-700" role="status">
+          <p className="mt-1.5 text-sm font-medium text-[#8a5a00]" role="status">
             Esta atividade não possui turmas disponíveis no momento.
           </p>
         )}
       </div>
 
       {groupsError && (
-        <p className="text-sm text-red-600" role="alert">{groupsError}</p>
+        <p className="text-sm font-medium text-[#a61b1b]" role="alert">{groupsError}</p>
       )}
     </div>
   );
@@ -211,13 +208,13 @@ export function RegisterPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Formulário de Inscrição</h1>
-        <p className="text-gray-600 mt-2 text-base">Preencha seus dados e escolha as turmas desejadas.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] tracking-tight">Formulário de Inscrição</h1>
+        <p className="mt-2 text-base text-[#3d3d3d]">Preencha seus dados e escolha as turmas desejadas.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
         <fieldset className="space-y-5">
-          <legend className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Dados Pessoais</legend>
+          <legend className="text-lg sm:text-xl font-semibold text-[#1a1a1a] mb-3 w-full">Dados Pessoais</legend>
 
           <Input
             {...register('name')}
@@ -226,7 +223,6 @@ export function RegisterPage() {
             error={errors.name?.message}
             autoComplete="name"
             className="text-base py-3"
-            required
           />
 
           <Input
@@ -240,7 +236,6 @@ export function RegisterPage() {
             autoComplete="off"
             inputMode="numeric"
             className="text-base py-3"
-            required
           />
 
           <Input
@@ -252,28 +247,27 @@ export function RegisterPage() {
             max={REFERENCE_DATE.toISOString().split('T')[0]}
             autoComplete="bday"
             className="text-base py-3"
-            required
           />
 
           {age !== null && (
             <div
-              className={`flex items-center gap-2 px-4 py-3 rounded-lg ${isPriority ? 'bg-amber-50 border border-amber-300' : 'bg-blue-50 border border-blue-200'}`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${isPriority ? 'bg-[#fbf3e0] border-[#e8d9b0]' : 'bg-[#eaf2f7] border-[#cddfe8]'}`}
               role="status"
             >
-              <Info className={`h-5 w-5 flex-shrink-0 ${isPriority ? 'text-amber-600' : 'text-blue-600'}`} aria-hidden="true" />
-              <span className="text-base font-medium">
+              <Info className={`h-5 w-5 flex-shrink-0 ${isPriority ? 'text-[#8a5a00]' : 'text-[#1f4d6b]'}`} aria-hidden="true" />
+              <p className="text-base font-medium text-[#1a1a1a]">
                 Idade na data de referência (05/01/2027): <strong>{age} anos</strong>
                 {isPriority && (
-                  <> — <strong className="text-amber-700">Prioridade 80+</strong></>
+                  <> — <strong className="text-[#8a5a00]">Prioridade 80+</strong></>
                 )}
-              </span>
+              </p>
             </div>
           )}
         </fieldset>
 
         <fieldset className="space-y-5">
-          <legend className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Escolha das Turmas</legend>
-          <p className="text-base text-gray-600">
+          <legend className="text-lg sm:text-xl font-semibold text-[#1a1a1a] mb-3 w-full">Escolha das Turmas</legend>
+          <p className="text-base text-[#3d3d3d]">
             Escolha <strong>uma turma por grupo</strong>. É obrigatório escolher pelo menos um grupo.
           </p>
 
@@ -296,18 +290,22 @@ export function RegisterPage() {
               groupsError={groupsError}
             />
           </div>
+
+          {groupsError && (
+            <p className="text-sm font-medium text-[#a61b1b]" role="alert">{groupsError}</p>
+          )}
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Declaração de Aceitação</legend>
+          <legend className="text-lg sm:text-xl font-semibold text-[#1a1a1a] mb-3 w-full">Declaração de Aceitação</legend>
 
           <label
             htmlFor="accept-declaration"
             className={`
-              flex items-start gap-4 p-4 sm:p-5 rounded-xl border-2 cursor-pointer transition-colors
+              flex items-start gap-4 p-5 rounded-lg border-2 cursor-pointer transition-colors
               ${errors.acceptDeclaration
-                ? 'border-red-400 bg-red-50'
-                : 'border-gray-300 bg-gray-50 hover:border-[#7b1113] hover:bg-[#fdf0f0]'
+                ? 'border-[#a61b1b] bg-[#fbeaea]'
+                : 'border-[#d8d8d8] bg-[#fafafa] hover:border-[#7b1113] hover:bg-[#fdf0f0]'
               }
             `}
           >
@@ -315,12 +313,12 @@ export function RegisterPage() {
               {...register('acceptDeclaration')}
               id="accept-declaration"
               type="checkbox"
-              className="mt-1 h-6 w-6 flex-shrink-0 rounded border-gray-400 text-[#7b1113] accent-[#7b1113] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+              className="mt-1 h-6 w-6 flex-shrink-0 rounded border-[#b8b8b8] text-[#7b1113] accent-[#7b1113] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
               aria-invalid={errors.acceptDeclaration ? 'true' : 'false'}
               aria-describedby={errors.acceptDeclaration ? 'accept-declaration-error' : undefined}
             />
-            <span className="text-base text-gray-700 leading-relaxed">
-              <strong className="block text-gray-900 mb-1">
+            <span className="text-base text-[#3d3d3d] leading-relaxed">
+              <strong className="block text-[#1a1a1a] mb-1">
                 Declaração de aceitação do Edital de Sorteio CATI 01/2027
               </strong>
               Declaro que compreendo e aceito os termos do Edital de Sorteio CATI 01/2027,
@@ -330,27 +328,27 @@ export function RegisterPage() {
           </label>
 
           {errors.acceptDeclaration && (
-            <p id="accept-declaration-error" className="text-sm text-red-600" role="alert">
+            <p id="accept-declaration-error" className="text-sm font-medium text-[#a61b1b]" role="alert">
               {errors.acceptDeclaration.message}
             </p>
           )}
         </fieldset>
 
         {serviceError && (
-          <div className="flex items-start gap-2 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
-            <Info className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-sm text-red-700">{serviceError}</p>
+          <div className="flex items-start gap-3 p-4 bg-[#fbeaea] border border-[#a61b1b] rounded-lg" role="alert">
+            <Info className="h-5 w-5 text-[#a61b1b] flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <p className="text-base text-[#a61b1b]">{serviceError}</p>
           </div>
         )}
 
-        <div className="pt-4 border-t border-gray-200">
-          <Button type="submit" loading={submitting} fullWidth size="lg" className="text-base py-3.5">
+        <div className="pt-4 border-t border-[#e5e5e5]">
+          <Button type="submit" loading={submitting} fullWidth size="lg" className="text-base">
             Confirmar Inscrição
           </Button>
         </div>
       </form>
 
-      <div className="mt-8 p-5 bg-gray-50 rounded-xl border border-gray-200 text-base text-gray-600 space-y-2">
+      <div className="mt-8 p-5 bg-[#fafafa] border border-[#d8d8d8] rounded-lg text-base text-[#3d3d3d] space-y-2.5">
         <p><strong>Data de referência para cálculo de idade:</strong> 05/01/2027</p>
         <p><strong>Idade mínima:</strong> 60 anos completos até a data de referência</p>
         <p><strong>Prioridade:</strong> Pessoas com 80 anos ou mais têm prioridade no sorteio</p>

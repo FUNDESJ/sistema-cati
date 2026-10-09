@@ -3,6 +3,7 @@ import { forwardRef, type SelectHTMLAttributes } from 'react';
 interface SelectOption {
   value: string;
   label: string;
+  disabled?: boolean;
 }
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -17,29 +18,29 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, helperText, options, placeholder, fullWidth, className = '', id, ...props }, ref) => {
     const selectId = id || label.toLowerCase().replace(/\s+/g, '-');
+    const errorId = `${selectId}-error`;
+    const helperId = `${selectId}-helper`;
 
     return (
       <div className={`${fullWidth ? 'w-full' : ''} ${className}`}>
-        {label && (
-          <label htmlFor={selectId} className="block text-sm font-medium text-gray-900 mb-1">
-            {label}
-          </label>
-        )}
+        <label htmlFor={selectId} className="block text-[0.9375rem] font-semibold text-[#1a1a1a] mb-1.5">
+          {label}
+        </label>
         <select
           ref={ref}
           id={selectId}
           className={`
-            w-full px-3 py-2 border rounded-lg text-sm transition-colors appearance-none
-            bg-white
-            focus:outline-none focus:ring-2 focus:ring-offset-0
+            w-full px-3.5 py-3 border rounded-md text-base leading-snug
+            bg-white text-[#1a1a1a]
+            transition-colors
+            disabled:bg-[#f4f4f4] disabled:text-[#595959] disabled:cursor-not-allowed
             ${error
-              ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-              : 'border-gray-300 focus:ring-[#7b1113] focus:border-[#7b1113]'
+              ? 'border-[#a61b1b] focus:outline-none focus:border-[#a61b1b] focus:shadow-[0_0_0_3px_rgb(166_27_27/0.15)]'
+              : 'border-[#b8b8b8] hover:border-[#595959] focus:outline-none focus:border-[#7b1113] focus:shadow-[0_0_0_3px_rgb(123_17_19/0.15)]'
             }
-            ${props.disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}
           `}
           aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={error ? `${selectId}-error` : helperText ? `${selectId}-helper` : undefined}
+          aria-describedby={error ? errorId : helperText ? helperId : undefined}
           {...props}
         >
           {placeholder && (
@@ -48,18 +49,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           )}
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} disabled={option.disabled}>
               {option.label}
             </option>
           ))}
         </select>
         {error && (
-          <p id={`${selectId}-error`} className="mt-1 text-sm text-red-600" role="alert">
+          <p id={errorId} className="mt-1.5 text-sm font-medium text-[#a61b1b]" role="alert">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={`${selectId}-helper`} className="mt-1 text-sm text-gray-500">
+          <p id={helperId} className="mt-1.5 text-sm text-[#595959]">
             {helperText}
           </p>
         )}
