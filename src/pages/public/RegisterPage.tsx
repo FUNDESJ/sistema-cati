@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -130,6 +130,11 @@ export function RegisterPage() {
   const [isPriority, setIsPriority] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
+
+  // Scroll to top when component mounts (e.g., when navigating from home page)
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<RegistrationForm>({
     resolver: zodResolver(registrationSchema),
