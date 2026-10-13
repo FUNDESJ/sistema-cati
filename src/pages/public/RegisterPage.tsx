@@ -8,6 +8,8 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { ageAtReferenceDate, REFERENCE_DATE } from '../../domain/age';
+import { isValidPhone, formatPhone } from '../../domain/phone';
+import { SAO_JOSE_NEIGHBORHOODS } from '../../data/neighborhoods';
 import { getActivitiesByGroup } from '../../data/activities';
 import { getWorkshopsByGroup, getWorkshopsByActivity, workshopLabel } from '../../data/workshops';
 import { createRegistration } from '../../services/registrationService';
@@ -16,6 +18,10 @@ const registrationSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   cpf: z.string().min(11, 'CPF deve ter 11 dígitos'),
   birthDate: z.string().min(1, 'Data de nascimento é obrigatória'),
+  phone: z.string().refine((value) => isValidPhone(value), {
+    message: 'Informe um celular válido com DDD. Ex: (48) 99999-9999',
+  }),
+  neighborhood: z.string().min(1, 'Selecione o bairro de São José em que reside'),
   group1ActivityId: z.string().nullable(),
   group1WorkshopId: z.string().nullable(),
   group2ActivityId: z.string().nullable(),
@@ -69,13 +75,13 @@ function GroupSelector({
 
   return (
     <div className="space-y-5 p-5 bg-[#fafafa] border border-[#d8d8d8] rounded-lg">
-      <h3 className="text-base font-semibold text-[#1a1a1a]">{GROUP_LABELS[groupId]}</h3>
+      <h3 id={`group${groupId}-title`} className="text-base font-semibold text-[#1a1a1a]">{GROUP_LABELS[groupId]}</h3>
 
       <div>
-        <p className="text-base font-medium text-[#1a1a1a] mb-1.5">
+        <p id={`${activitySelectId}-step`} className="text-base font-medium text-[#1a1a1a] mb-1.5">
           Escolha uma atividade
         </p>
-<Select
+        <Select
           id={activitySelectId}
           label=""
           placeholder="Selecione uma atividade"
@@ -84,12 +90,12 @@ function GroupSelector({
           onChange={(e) => onActivityChange(e.target.value || null)}
           error={activityError}
           className="text-base py-3"
-          aria-labelledby={`group${groupId}-title ${activitySelectId}-label`}
+          aria-labelledby={`group${groupId}-title ${activitySelectId}-step`}
         />
       </div>
 
       <div>
-        <p className="text-base font-medium text-[#1a1a1a] mb-1.5" id={`${workshopSelectId}-step`}>
+        <p id={`${workshopSelectId}-step`} className="text-base font-medium text-[#1a1a1a] mb-1.5">
           Escolha o dia e horário
         </p>
         <Select
@@ -101,6 +107,7 @@ function GroupSelector({
           onChange={(e) => onWorkshopChange(e.target.value || null)}
           disabled={activityId === null || hasNoWorkshops}
           className="text-base py-3"
+          aria-labelledby={`group${groupId}-title ${workshopSelectId}-step`}
           aria-describedby={activityId === null ? `${workshopSelectId}-hint` : undefined}
         />
         {activityId === null && (
@@ -126,6 +133,7 @@ export function RegisterPage() {
   const navigate = useNavigate();
   const [cpf, setCpf] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [phone, setPhone] = useState('');
   const [age, setAge] = useState<number | null>(null);
   const [isPriority, setIsPriority] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -142,6 +150,8 @@ export function RegisterPage() {
       name: '',
       cpf: '',
       birthDate: '',
+      phone: '',
+      neighborhood: '',
       group1ActivityId: null,
       group1WorkshopId: null,
       group2ActivityId: null,
@@ -169,6 +179,13 @@ export function RegisterPage() {
     setValue('cpf', digits, { shouldValidate: true });
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+    const formatted = formatPhone(digits);
+    setPhone(formatted);
+    setValue('phone', digits, { shouldValidate: true });
+  };
+
   const handleActivityChange = (group: 1 | 2, activityId: string | null) => {
     const activityField = group === 1 ? 'group1ActivityId' : 'group2ActivityId';
     const workshopField = group === 1 ? 'group1WorkshopId' : 'group2WorkshopId';
@@ -191,6 +208,8 @@ export function RegisterPage() {
         name: data.name,
         cpf: data.cpf,
         birthDate: data.birthDate,
+        phone: data.phone,
+        neighborhood: data.neighborhood,
         group1WorkshopId: data.group1WorkshopId,
         group2WorkshopId: data.group2WorkshopId,
       }, allWorkshops);
@@ -244,6 +263,20 @@ export function RegisterPage() {
           />
 
           <Input
+            label="Celular"
+            placeholder="(48) 99999-9999"
+            value={phone}
+            onChange={handlePhoneChange}
+            error={errors.phone?.message}
+            helperText="Com DDD. A formatação é automática."
+            maxLength={15}
+            autoComplete="tel-national"
+            inputMode="numeric"
+            type="tel"
+            className="text-base py-3"
+          />
+
+          <Input
             label="Data de nascimento"
             type="date"
             value={birthDate}
@@ -252,6 +285,15 @@ export function RegisterPage() {
             max={REFERENCE_DATE.toISOString().split('T')[0]}
             autoComplete="bday"
             className="text-base py-3"
+          />
+
+          <Select
+            label="Bairro de São José em que reside"
+            placeholder="Selecione o bairro"
+            options={SAO_JOSE_NEIGHBORHOODS.map((n) => ({ value: n, label: n }))}
+            error={errors.neighborhood?.message}
+            className="text-base py-3"
+            {...register('neighborhood')}
           />
 
           {age !== null && (

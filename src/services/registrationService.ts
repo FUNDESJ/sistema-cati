@@ -3,6 +3,8 @@ import { getState, addRegistration, updateRegistration, subscribe } from '../sto
 import { isDuplicatedCpf, resolveDuplications } from '../domain/registration';
 import { ageAtReferenceDate } from '../domain/age';
 import { isValidCpf, normalizeCpf } from '../domain/cpf';
+import { isValidPhone, normalizePhone } from '../domain/phone';
+import { isSaoJoseNeighborhood } from '../data/neighborhoods';
 
 function generateId(): string {
   return `insc-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -12,6 +14,8 @@ export interface CreateRegistrationInput {
   name: string;
   cpf: string;
   birthDate: string;
+  phone: string;
+  neighborhood: string;
   group1WorkshopId: string | null;
   group2WorkshopId: string | null;
 }
@@ -44,6 +48,18 @@ export function validateRegistrationInput(
     errors.birthDate = 'Data de nascimento inválida';
   } else if (age < 60) {
     errors.birthDate = 'É necessário ter 60 anos ou mais até 05/01/2027';
+  }
+
+  if (!input.phone.trim()) {
+    errors.phone = 'Celular é obrigatório';
+  } else if (!isValidPhone(input.phone)) {
+    errors.phone = 'Informe um celular válido com DDD. Ex: (48) 99999-9999';
+  }
+
+  if (!input.neighborhood) {
+    errors.neighborhood = 'Selecione o bairro de São José em que reside';
+  } else if (!isSaoJoseNeighborhood(input.neighborhood)) {
+    errors.neighborhood = 'Bairro inválido';
   }
 
   if (input.group1WorkshopId) {
@@ -92,6 +108,8 @@ export function createRegistration(
       name: input.name.trim(),
       cpf: normalizeCpf(input.cpf),
       birthDate: input.birthDate,
+      phone: normalizePhone(input.phone),
+      neighborhood: input.neighborhood,
     },
     group1WorkshopId: input.group1WorkshopId,
     group2WorkshopId: input.group2WorkshopId,

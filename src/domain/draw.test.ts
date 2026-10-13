@@ -26,6 +26,8 @@ const baseParticipant = {
   name: 'Participante',
   cpf: '52998224725',
   birthDate: '1950-01-01',
+  phone: '48999999999',
+  neighborhood: 'Campinas',
 };
 
 function makeRegistration(overrides: Partial<Registration>): Registration {

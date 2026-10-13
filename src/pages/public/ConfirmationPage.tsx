@@ -1,6 +1,7 @@
 import { useLocation, Link } from 'react-router-dom';
 import { CheckCircle2, Calendar, Clock, Info } from 'lucide-react';
 import { maskCpf } from '../../domain/cpf';
+import { formatPhone } from '../../domain/phone';
 import { getWorkshopById } from '../../data/workshops';
 import type { Registration } from '../../types';
 
@@ -57,6 +58,14 @@ export function ConfirmationPage() {
           <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
             <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">Data de nascimento</dt>
             <dd className="text-base font-semibold text-[#1a1a1a]">{registration.participant.birthDate}</dd>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
+            <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">Celular</dt>
+            <dd className="text-base font-semibold text-[#1a1a1a]">{formatPhone(registration.participant.phone)}</dd>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
+            <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">Bairro</dt>
+            <dd className="text-base font-semibold text-[#1a1a1a]">{registration.participant.neighborhood}</dd>
           </div>
         </dl>
       </section>

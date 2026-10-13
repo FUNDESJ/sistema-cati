@@ -60,14 +60,14 @@ export function exportDrawResultCsv(result: DrawResult): string {
   return rows.map(toCsvRow).join('\n');
 }
 
-export function exportRegistrationsCsv(registrations: { id: string; participant: { name: string; cpf: string; birthDate: string }; group1WorkshopId: string | null; group2WorkshopId: string | null; status: string; createdAt: string }[]): string {
+export function exportRegistrationsCsv(registrations: { id: string; participant: { name: string; cpf: string; birthDate: string; phone: string; neighborhood: string }; group1WorkshopId: string | null; group2WorkshopId: string | null; status: string; createdAt: string }[]): string {
   const rows: (string | number)[][] = [];
 
   rows.push(['CATI 2027 — Inscrições']);
   rows.push([`Exportado em: ${new Date().toLocaleString('pt-BR')}`]);
   rows.push([]);
 
-  rows.push(['Inscrição', 'Nome', 'CPF', 'Data Nasc.', 'Grupo 1', 'Grupo 2', 'Status', 'Criado em']);
+  rows.push(['Inscrição', 'Nome', 'CPF', 'Data Nasc.', 'Celular', 'Bairro', 'Grupo 1', 'Grupo 2', 'Status', 'Criado em']);
 
   for (const r of registrations) {
     rows.push([
@@ -75,6 +75,8 @@ export function exportRegistrationsCsv(registrations: { id: string; participant:
       r.participant.name,
       r.participant.cpf,
       r.participant.birthDate,
+      r.participant.phone,
+      r.participant.neighborhood,
       r.group1WorkshopId ?? '—',
       r.group2WorkshopId ?? '—',
       r.status,

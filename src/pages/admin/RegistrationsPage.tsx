@@ -35,7 +35,8 @@ export function RegistrationsPage() {
   const filtered = registrations.filter((r) => {
     const matchesSearch =
       r.participant.name.toLowerCase().includes(search.toLowerCase()) ||
-      r.participant.cpf.includes(search.replace(/\D/g, ''));
+      r.participant.cpf.includes(search.replace(/\D/g, '')) ||
+      r.participant.phone.includes(search.replace(/\D/g, ''));
     const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -77,6 +78,16 @@ export function RegistrationsPage() {
       key: 'birthDate',
       header: 'Nascimento',
       render: (r: Registration) => r.participant.birthDate,
+    },
+    {
+      key: 'neighborhood',
+      header: 'Bairro',
+      render: (r: Registration) => r.participant.neighborhood,
+    },
+    {
+      key: 'phone',
+      header: 'Celular',
+      render: (r: Registration) => <code className="text-sm">{r.participant.phone}</code>,
     },
     {
       key: 'groups',
@@ -201,6 +212,14 @@ export function RegistrationsPage() {
             <div>
               <dt className="font-medium text-[#595959]">Data de nascimento</dt>
               <dd className="mt-0.5 font-semibold text-[#1a1a1a]">{selectedRegistration.participant.birthDate}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Celular</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">{selectedRegistration.participant.phone}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-[#595959]">Bairro</dt>
+              <dd className="mt-0.5 font-semibold text-[#1a1a1a]">{selectedRegistration.participant.neighborhood}</dd>
             </div>
             <div>
               <dt className="font-medium text-[#595959]">Grupo 1</dt>

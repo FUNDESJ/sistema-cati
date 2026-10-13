@@ -41,12 +41,14 @@ function fillForm(user: ReturnType<typeof userEvent.setup>) {
   return (async () => {
     await user.type(screen.getByLabelText('Nome completo'), 'Maria da Silva Teste');
     await user.type(screen.getByLabelText('CPF'), makeCpf('999888777'));
+    await user.type(screen.getByLabelText('Celular'), '48999999999');
     await user.type(screen.getByLabelText('Data de nascimento'), '1950-01-01');
+    await user.selectOptions(screen.getByLabelText('Bairro de São José em que reside'), 'Campinas');
 
-    const activityG1 = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const activityG1 = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
     await user.selectOptions(activityG1, 'danca-salao');
 
-    const workshopG1 = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const workshopG1 = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
     await waitFor(() => expect(workshopG1).toBeEnabled());
     await user.selectOptions(workshopG1, getOptionValues(workshopG1)[1]);
   })();
@@ -56,20 +58,21 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
   it('o select de turma começa desabilitado com indicação clara', () => {
     renderRegisterPage();
 
-    const workshopSelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const workshopSelect = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
 
     expect(workshopSelect).toBeDisabled();
-    expect(screen.getByText('É necessário escolher uma atividade primeiro.')).toBeInTheDocument();
+    const hints = screen.getAllByText('É necessário escolher uma atividade primeiro.');
+    expect(hints.length).toBeGreaterThanOrEqual(1);
   });
 
   it('Grupo 1: selecionar Dança de Salão mostra somente turmas de Dança de Salão', async () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const activitySelect = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'danca-salao');
 
-    const workshopSelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const workshopSelect = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
 
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
@@ -86,10 +89,10 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const activitySelect = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'pilates-solo');
 
-    const workshopSelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const workshopSelect = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
 
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
@@ -105,10 +108,10 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const activitySelect = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'danca-salao');
 
-    const workshopSelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const workshopSelect = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
     const dancaOptions = getOptionValues(workshopSelect);
@@ -119,19 +122,19 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
 
     await waitFor(() => expect(workshopSelect.value).toBe(''));
 
-    const texts = getOptionTexts(workshopSelect);
-    expect(texts.every((t) => !t.includes('Dança'))).toBe(true);
-    expect(texts.every((t) => t.includes('Pilates') || t.includes('vagas'))).toBe(true);
+    const turmaTexts = getOptionTexts(workshopSelect).filter((t) => t !== 'Selecione o dia e horário');
+    expect(turmaTexts.every((t) => !t.includes('Dança'))).toBe(true);
+    expect(turmaTexts).toHaveLength(6);
   });
 
   it('Grupo 2: selecionar Teatro mostra somente turmas de Teatro', async () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 2.*Grupo 2 — Atividades Socioeducativas/);
+    const activitySelect = getComboboxByName(/Grupo 2.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'teatro');
 
-    const workshopSelect = getComboboxByName(/Grupo 2.*Grupo 2 — Atividades Socioeducativas/);
+    const workshopSelect = getComboboxByName(/Grupo 2.*Escolha o dia e horário/);
 
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
@@ -146,10 +149,10 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 2.*Grupo 2 — Atividades Socioeducativas/);
+    const activitySelect = getComboboxByName(/Grupo 2.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'canto');
 
-    const workshopSelect = getComboboxByName(/Grupo 2.*Grupo 2 — Atividades Socioeducativas/);
+    const workshopSelect = getComboboxByName(/Grupo 2.*Escolha o dia e horário/);
 
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
@@ -165,10 +168,10 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 2.*Grupo 2 — Atividades Socioeducativas/);
+    const activitySelect = getComboboxByName(/Grupo 2.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'teatro');
 
-    const workshopSelect = getComboboxByName(/Grupo 2.*Grupo 2 — Atividades Socioeducativas/);
+    const workshopSelect = getComboboxByName(/Grupo 2.*Escolha o dia e horário/);
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
     const teatroOptions = getOptionValues(workshopSelect);
@@ -179,22 +182,22 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
 
     await waitFor(() => expect(workshopSelect.value).toBe(''));
 
-    const texts = getOptionTexts(workshopSelect);
-    expect(texts.every((t) => !t.includes('Teatro'))).toBe(true);
-    expect(texts.every((t) => t.includes('Canto') || t.includes('Nenhuma'))).toBe(true);
+    const turmaTexts = getOptionTexts(workshopSelect).filter((t) => t !== 'Selecione o dia e horário');
+    expect(turmaTexts.every((t) => !t.includes('Teatro'))).toBe(true);
+    expect(turmaTexts).toHaveLength(8);
   });
 
   it('os options de turma indicam as vagas disponíveis', async () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
-    const activitySelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const activitySelect = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
     await user.selectOptions(activitySelect, 'danca-salao');
 
-    const workshopSelect = getComboboxByName(/Grupo 1.*Grupo 1 — Atividades Físicas/);
+    const workshopSelect = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
-    const turmaTexts = getOptionTexts(workshopSelect).filter((t) => t !== 'Escolha um dia e horário');
+    const turmaTexts = getOptionTexts(workshopSelect).filter((t) => t !== 'Selecione o dia e horário');
     expect(turmaTexts.every((t) => t.includes('vagas'))).toBe(true);
   });
 });
@@ -238,6 +241,82 @@ describe('RegisterPage — declaração de aceitação obrigatória', () => {
 
     expect(
       await screen.findByText('Inscrição Confirmada!'),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('RegisterPage — campo de celular', () => {
+  it('formata o celular com máscara (48) 99999-9999 durante a digitação', async () => {
+    const user = userEvent.setup();
+    renderRegisterPage();
+
+    const phoneInput = screen.getByLabelText('Celular');
+    await user.type(phoneInput, '48999999999');
+
+    expect(phoneInput).toHaveValue('(48) 99999-9999');
+  });
+
+  it('bloqueia a submissão com celular inválido', async () => {
+    const user = userEvent.setup();
+    renderRegisterPage();
+
+    await user.type(screen.getByLabelText('Nome completo'), 'Maria da Silva Teste');
+    await user.type(screen.getByLabelText('CPF'), makeCpf('999888777'));
+    await user.type(screen.getByLabelText('Celular'), '4833334444');
+    await user.type(screen.getByLabelText('Data de nascimento'), '1950-01-01');
+    await user.selectOptions(screen.getByLabelText('Bairro de São José em que reside'), 'Campinas');
+
+    const activityG1 = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
+    await user.selectOptions(activityG1, 'danca-salao');
+    const workshopG1 = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
+    await waitFor(() => expect(workshopG1).toBeEnabled());
+    await user.selectOptions(workshopG1, getOptionValues(workshopG1)[1]);
+
+    const checkbox = screen.getByLabelText(/Declaração de aceitação do Edital de Sorteio CATI 01\/2027/);
+    await user.click(checkbox);
+
+    await user.click(screen.getByRole('button', { name: 'Confirmar Inscrição' }));
+
+    expect(
+      await screen.findByText(/Informe um celular válido com DDD/),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('RegisterPage — campo de bairro', () => {
+  it('oferece os bairros de São José no select', () => {
+    renderRegisterPage();
+
+    const select = screen.getByLabelText('Bairro de São José em que reside') as HTMLSelectElement;
+    const optionTexts = Array.from(select.options).map((o) => o.textContent ?? '');
+
+    expect(optionTexts.some((t) => t === 'Campinas')).toBe(true);
+    expect(optionTexts.some((t) => t === 'Kobrasol')).toBe(true);
+    expect(optionTexts.some((t) => t === 'Sertão do Maruim')).toBe(true);
+  });
+
+  it('bloqueia a submissão sem selecionar bairro', async () => {
+    const user = userEvent.setup();
+    renderRegisterPage();
+
+    await user.type(screen.getByLabelText('Nome completo'), 'Maria da Silva Teste');
+    await user.type(screen.getByLabelText('CPF'), makeCpf('999888777'));
+    await user.type(screen.getByLabelText('Celular'), '48999999999');
+    await user.type(screen.getByLabelText('Data de nascimento'), '1950-01-01');
+
+    const activityG1 = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
+    await user.selectOptions(activityG1, 'danca-salao');
+    const workshopG1 = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
+    await waitFor(() => expect(workshopG1).toBeEnabled());
+    await user.selectOptions(workshopG1, getOptionValues(workshopG1)[1]);
+
+    const checkbox = screen.getByLabelText(/Declaração de aceitação do Edital de Sorteio CATI 01\/2027/);
+    await user.click(checkbox);
+
+    await user.click(screen.getByRole('button', { name: 'Confirmar Inscrição' }));
+
+    expect(
+      await screen.findByText(/Selecione o bairro de São José em que reside/),
     ).toBeInTheDocument();
   });
 });

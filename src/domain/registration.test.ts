@@ -9,6 +9,8 @@ function makeRegistration(overrides: Partial<Registration>): Registration {
       name: 'Participante Teste',
       cpf: '52998224725',
       birthDate: '1950-03-10',
+      phone: '48999999999',
+      neighborhood: 'Campinas',
     },
     group1WorkshopId: 't001',
     group2WorkshopId: 't002',

@@ -1,5 +1,6 @@
 import type { Registration } from '../types';
 import { getWorkshopsByGroup } from './workshops';
+import { SAO_JOSE_NEIGHBORHOODS } from './neighborhoods';
 
 function computeCheckDigit(base: number[]): number {
   const weightStart = base.length + 1;
@@ -68,12 +69,15 @@ export function buildMockRegistrations(): Registration[] {
     hour: number,
   ) => {
     sequence += 1;
+    const neighborhood = SAO_JOSE_NEIGHBORHOODS[sequence % SAO_JOSE_NEIGHBORHOODS.length];
     registrations.push({
       id: `insc-${String(sequence).padStart(4, '0')}`,
       participant: {
         name,
         cpf,
         birthDate,
+        phone: `(48) 9${String(8000 + sequence).padStart(4, '0')}-${String(1000 + sequence).slice(0, 4)}`,
+        neighborhood,
       },
       group1WorkshopId,
       group2WorkshopId,

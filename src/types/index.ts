@@ -8,6 +8,8 @@ export interface Participant {
   name: string;
   cpf: string;
   birthDate: string;
+  phone: string;
+  neighborhood: string;
 }
 
 export interface Registration {
