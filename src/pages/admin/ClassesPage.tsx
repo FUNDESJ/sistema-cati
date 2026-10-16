@@ -1,7 +1,15 @@
-import { useState } from 'react';
-import { Plus, Edit, Trash2 } from 'lucide-react';
-import { listWorkshops, createWorkshop, updateWorkshopDetails, deleteWorkshop } from '../../services/classService';
+import { useEffect, useSyncExternalStore, useState } from 'react';
+import { Plus, Edit, Trash2, AlertCircle } from 'lucide-react';
+import {
+  listWorkshops,
+  createWorkshop,
+  updateWorkshopDetails,
+  deleteWorkshop,
+  refreshAdminWorkshops,
+} from '../../services/classService';
 import { getActivitiesByGroup } from '../../data/activities';
+import { subscribe, getState } from '../../store';
+import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
@@ -9,6 +17,7 @@ import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import type { Workshop, Activity } from '../../types';
 
 interface WorkshopFormData {
@@ -27,6 +36,8 @@ const GROUP_ACTIVITIES: Record<1 | 2, Activity[]> = {
 };
 
 export function ClassesPage() {
+  useSyncExternalStore(subscribe, getState);
+
   const [search, setSearch] = useState('');
   const [groupFilter, setGroupFilter] = useState<'all' | 1 | 2>('all');
   const [activityFilter, setActivityFilter] = useState<string>('');
@@ -34,6 +45,8 @@ export function ClassesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Workshop | null>(null);
+  const [mutationError, setMutationError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<WorkshopFormData>({
     activityId: '',
     activityName: '',
@@ -44,7 +57,23 @@ export function ClassesPage() {
     professor: '',
   });
 
+  useEffect(() => {
+    refreshAdminWorkshops()
+      .catch(() => undefined)
+      .finally(() => setLoading(false));
+  }, []);
+
   const workshops = listWorkshops();
+
+  function mutationErrorMessage(error: unknown): string {
+    if (error instanceof ApiError) {
+      if (error.fields && Object.keys(error.fields).length > 0) {
+        return Object.values(error.fields).join(' ');
+      }
+      return error.message;
+    }
+    return 'Não foi possível concluir a operação. Tente novamente.';
+  }
 
   const filtered = workshops.filter((w) => {
     const matchesSearch = w.activityName.toLowerCase().includes(search.toLowerCase()) || w.professor.toLowerCase().includes(search.toLowerCase());
@@ -86,27 +115,41 @@ export function ClassesPage() {
     setModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingWorkshop) {
-      updateWorkshopDetails(editingWorkshop.id, {
-        activityId: formData.activityId,
-        activityName: formData.activityName,
-        groupId: formData.groupId,
-        days: formData.days,
-        startTime: formData.startTime,
-        vacancies: formData.vacancies,
-        professor: formData.professor,
-      });
-    } else {
-      createWorkshop(formData);
+    setMutationError(null);
+    try {
+      if (editingWorkshop) {
+        await updateWorkshopDetails(editingWorkshop.id, {
+          activityId: formData.activityId,
+          groupId: formData.groupId,
+          days: formData.days,
+          startTime: formData.startTime,
+          vacancies: formData.vacancies,
+          professor: formData.professor,
+        });
+      } else {
+        await createWorkshop(formData);
+      }
+      setModalOpen(false);
+      setEditingWorkshop(null);
+    } catch (error) {
+      setMutationError(mutationErrorMessage(error));
     }
-    setModalOpen(false);
-    setEditingWorkshop(null);
   };
 
   const handleDelete = (workshop: Workshop) => setConfirmDelete(workshop);
-  const executeDelete = () => { if (confirmDelete) { deleteWorkshop(confirmDelete.id); setConfirmDelete(null); } };
+  const executeDelete = async () => {
+    if (!confirmDelete) return;
+    setMutationError(null);
+    try {
+      await deleteWorkshop(confirmDelete.id);
+      setConfirmDelete(null);
+    } catch (error) {
+      setMutationError(mutationErrorMessage(error));
+      setConfirmDelete(null);
+    }
+  };
 
   const columns = [
     { key: 'activityName', header: 'Atividade', render: (w: Workshop) => <p className="font-semibold text-[#1a1a1a]">{w.activityName}</p> },
@@ -187,8 +230,22 @@ export function ClassesPage() {
         </p>
       </div>
 
+      {mutationError && (
+        <div className="flex items-start gap-3 p-4 bg-[#fbeaea] border border-[#a61b1b] rounded-lg" role="alert">
+          <AlertCircle className="h-5 w-5 text-[#a61b1b] flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-[#a61b1b]">{mutationError}</p>
+        </div>
+      )}
+
       <div className="border border-[#d8d8d8] rounded-lg overflow-hidden bg-white">
-        <Table columns={columns} data={filtered} keyExtractor={(w) => w.id} emptyMessage="Nenhuma turma encontrada" />
+        {loading ? (
+          <div className="flex items-center justify-center gap-3 py-12" role="status">
+            <LoadingSpinner />
+            <p className="text-sm text-[#595959]">Carregando turmas…</p>
+          </div>
+        ) : (
+          <Table columns={columns} data={filtered} keyExtractor={(w) => w.id} emptyMessage="Nenhuma turma encontrada" />
+        )}
       </div>
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingWorkshop ? 'Editar Turma' : 'Nova Turma'} size="lg">

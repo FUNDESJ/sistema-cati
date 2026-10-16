@@ -11,7 +11,13 @@ import { ageAtReferenceDate, REFERENCE_DATE } from '../../domain/age';
 import { isValidPhone, formatPhone } from '../../domain/phone';
 import { SAO_JOSE_NEIGHBORHOODS } from '../../data/neighborhoods';
 import { getActivitiesByGroup } from '../../data/activities';
-import { getWorkshopsByGroup, getWorkshopsByActivity, workshopLabel } from '../../data/workshops';
+import { workshopLabel } from '../../data/workshops';
+import {
+  listWorkshopsByGroup,
+  listWorkshopsByActivity,
+  refreshPublicWorkshops,
+} from '../../services/classService';
+import { getState } from '../../store';
 import { createRegistration } from '../../services/registrationService';
 
 const registrationSchema = z.object({
@@ -49,6 +55,7 @@ interface GroupSelectorProps {
   onWorkshopChange: (workshopId: string | null) => void;
   groupsError?: string;
   activityError?: string;
+  loading?: boolean;
 }
 
 function GroupSelector({
@@ -59,9 +66,10 @@ function GroupSelector({
   onWorkshopChange,
   groupsError,
   activityError,
+  loading = false,
 }: GroupSelectorProps) {
   const activities = getActivitiesByGroup(groupId);
-  const availableWorkshops = activityId ? getWorkshopsByActivity(activityId) : [];
+  const availableWorkshops = activityId ? listWorkshopsByActivity(activityId) : [];
 
   const activitySelectId = `group${groupId}-activity`;
   const workshopSelectId = `group${groupId}-workshop`;
@@ -101,8 +109,14 @@ function GroupSelector({
         <Select
           id={workshopSelectId}
           label=""
-          placeholder={hasNoWorkshops ? 'Nenhuma turma disponível' : activityId ? 'Selecione o dia e horário' : 'Escolha uma atividade primeiro'}
-          options={hasNoWorkshops ? [{ value: '', label: 'Nenhuma turma disponível para esta atividade', disabled: true }] : workshopOptions}
+          placeholder={hasNoWorkshops
+            ? (loading ? 'Carregando turmas…' : 'Nenhuma turma disponível')
+            : activityId
+              ? 'Selecione o dia e horário'
+              : 'Escolha uma atividade primeiro'}
+          options={hasNoWorkshops
+            ? [{ value: '', label: loading ? 'Carregando turmas…' : 'Nenhuma turma disponível para esta atividade', disabled: true }]
+            : workshopOptions}
           value={workshopId ?? ''}
           onChange={(e) => onWorkshopChange(e.target.value || null)}
           disabled={activityId === null || hasNoWorkshops}
@@ -115,7 +129,7 @@ function GroupSelector({
             É necessário escolher uma atividade primeiro.
           </p>
         )}
-        {hasNoWorkshops && (
+        {hasNoWorkshops && !loading && (
           <p className="mt-1.5 text-sm font-medium text-[#8a5a00]" role="status">
             Esta atividade não possui turmas disponíveis no momento.
           </p>
@@ -138,10 +152,22 @@ export function RegisterPage() {
   const [isPriority, setIsPriority] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
+  const [workshopsLoading, setWorkshopsLoading] = useState(listWorkshopsByGroup(1).length === 0);
 
   // Scroll to top when component mounts (e.g., when navigating from home page)
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
+
+  // Carrega as turmas ativas da API quando o cache está vazio
+  useEffect(() => {
+    if (getState().workshops.length > 0) {
+      setWorkshopsLoading(false);
+      return;
+    }
+    refreshPublicWorkshops()
+      .catch(() => undefined)
+      .finally(() => setWorkshopsLoading(false));
   }, []);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<RegistrationForm>({
@@ -202,9 +228,7 @@ export function RegisterPage() {
     setSubmitting(true);
     setServiceError(null);
     try {
-      const allWorkshops = [...getWorkshopsByGroup(1), ...getWorkshopsByGroup(2)];
-
-      const result = createRegistration({
+      const result = await createRegistration({
         name: data.name,
         cpf: data.cpf,
         birthDate: data.birthDate,
@@ -212,7 +236,7 @@ export function RegisterPage() {
         neighborhood: data.neighborhood,
         group1WorkshopId: data.group1WorkshopId,
         group2WorkshopId: data.group2WorkshopId,
-      }, allWorkshops);
+      });
 
       if (result.success && result.registration) {
         navigate('/inscricao/confirmacao', { state: { registration: result.registration } });
@@ -326,6 +350,7 @@ export function RegisterPage() {
               onActivityChange={(id) => handleActivityChange(1, id)}
               onWorkshopChange={(id) => handleWorkshopChange(1, id)}
               groupsError={groupsError}
+              loading={workshopsLoading}
             />
 
             <GroupSelector
@@ -335,6 +360,7 @@ export function RegisterPage() {
               onActivityChange={(id) => handleActivityChange(2, id)}
               onWorkshopChange={(id) => handleWorkshopChange(2, id)}
               groupsError={groupsError}
+              loading={workshopsLoading}
             />
           </div>
 

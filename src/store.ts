@@ -1,20 +1,33 @@
 import type { Registration, Workshop, DrawResult, EmailConfirmation } from './types';
-import { INITIAL_WORKSHOPS } from './data/workshops';
-import { MOCK_REGISTRATIONS } from './data/registrations.mock';
+
+export interface RegistrationStats {
+  total: number;
+  homologadas: number;
+  pendentes: number;
+  naoHomologadas: number;
+  duplicadas: number;
+  group1: number;
+  group2: number;
+  bothGroups: number;
+}
 
 interface StoreState {
   registrations: Registration[];
   workshops: Workshop[];
   drawResults: Map<1 | 2, DrawResult>;
   emailOutbox: EmailConfirmation[];
+  stats: RegistrationStats | null;
 }
 
+// O store é um CACHE da API — não é mais fonte de verdade.
+// Os services hidratam este estado a partir do backend.
 function createInitialState(): StoreState {
   return {
-    registrations: [...MOCK_REGISTRATIONS],
-    workshops: [...INITIAL_WORKSHOPS],
+    registrations: [],
+    workshops: [],
     drawResults: new Map(),
     emailOutbox: [],
+    stats: null,
   };
 }
 
@@ -70,6 +83,14 @@ export function updateWorkshop(id: string, updates: Partial<Workshop>) {
   notify();
 }
 
+export function removeWorkshop(id: string) {
+  state = {
+    ...state,
+    workshops: state.workshops.filter((w) => w.id !== id),
+  };
+  notify();
+}
+
 export function setDrawResult(groupId: 1 | 2, result: DrawResult) {
   const newDrawResults = new Map(state.drawResults);
   newDrawResults.set(groupId, result);
@@ -86,6 +107,11 @@ export function deleteDrawResult(groupId: 1 | 2) {
 
 export function getDrawResult(groupId: 1 | 2): DrawResult | undefined {
   return state.drawResults.get(groupId);
+}
+
+export function setStats(stats: RegistrationStats) {
+  state = { ...state, stats };
+  notify();
 }
 
 export function addEmailConfirmation(email: EmailConfirmation) {

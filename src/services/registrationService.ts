@@ -1,14 +1,13 @@
-import type { Registration, Workshop } from '../types';
-import { getState, addRegistration, updateRegistration, subscribe } from '../store';
-import { isDuplicatedCpf, resolveDuplications } from '../domain/registration';
-import { ageAtReferenceDate } from '../domain/age';
-import { isValidCpf, normalizeCpf } from '../domain/cpf';
-import { isValidPhone, normalizePhone } from '../domain/phone';
-import { isSaoJoseNeighborhood } from '../data/neighborhoods';
-
-function generateId(): string {
-  return `insc-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
+import type { Registration } from '../types';
+import {
+  getState,
+  subscribe,
+  setRegistrations,
+  updateRegistration,
+  setStats,
+  type RegistrationStats,
+} from '../store';
+import { apiGet, apiPost, apiPatch, ApiError } from './api';
 
 export interface CreateRegistrationInput {
   name: string;
@@ -26,115 +25,55 @@ export interface RegistrationResult {
   errors: Record<string, string>;
 }
 
-export function validateRegistrationInput(
+const EMPTY_STATS: RegistrationStats = {
+  total: 0,
+  homologadas: 0,
+  pendentes: 0,
+  naoHomologadas: 0,
+  duplicadas: 0,
+  group1: 0,
+  group2: 0,
+  bothGroups: 0,
+};
+
+/**
+ * Cria a inscrição no servidor. O servidor valida tudo (idade, CPF, celular,
+ * bairro, turmas) e devolve os erros por campo no formato
+ * `{ success: false, errors: { campo: mensagem } }` — mesmo contrato de antes.
+ * CPF duplicado: a inscrição mais recente prevalece (regra do edital).
+ */
+export async function createRegistration(
   input: CreateRegistrationInput,
-  workshops: Workshop[],
-): Record<string, string> {
-  const errors: Record<string, string> = {};
-
-  if (!input.name.trim()) {
-    errors.name = 'Nome é obrigatório';
-  }
-
-  const normalizedCpf = normalizeCpf(input.cpf);
-  if (!normalizedCpf) {
-    errors.cpf = 'CPF é obrigatório';
-  } else if (!isValidCpf(normalizedCpf)) {
-    errors.cpf = 'CPF inválido';
-  }
-
-  const age = ageAtReferenceDate(input.birthDate);
-  if (age === null) {
-    errors.birthDate = 'Data de nascimento inválida';
-  } else if (age < 60) {
-    errors.birthDate = 'É necessário ter 60 anos ou mais até 05/01/2027';
-  }
-
-  if (!input.phone.trim()) {
-    errors.phone = 'Celular é obrigatório';
-  } else if (!isValidPhone(input.phone)) {
-    errors.phone = 'Informe um celular válido com DDD. Ex: (48) 99999-9999';
-  }
-
-  if (!input.neighborhood) {
-    errors.neighborhood = 'Selecione o bairro de São José em que reside';
-  } else if (!isSaoJoseNeighborhood(input.neighborhood)) {
-    errors.neighborhood = 'Bairro inválido';
-  }
-
-  if (input.group1WorkshopId) {
-    const workshop = workshops.find((w) => w.id === input.group1WorkshopId);
-    if (!workshop) {
-      errors.group1WorkshopId = 'Turma inválida';
-    } else if (workshop.status !== 'ativa') {
-      errors.group1WorkshopId = 'Esta turma não está disponível';
+): Promise<RegistrationResult> {
+  try {
+    const response = await apiPost<{ success: boolean; registration: Registration }>(
+      '/registrations',
+      input,
+    );
+    return { success: true, registration: response.registration, errors: {} };
+  } catch (error) {
+    if (error instanceof ApiError && error.fields) {
+      return { success: false, errors: error.fields };
     }
+    return {
+      success: false,
+      errors: {
+        _: error instanceof ApiError
+          ? error.message
+          : 'Não foi possível concluir a inscrição. Verifique os dados e tente novamente.',
+      },
+    };
   }
-
-  if (input.group2WorkshopId) {
-    const workshop = workshops.find((w) => w.id === input.group2WorkshopId);
-    if (!workshop) {
-      errors.group2WorkshopId = 'Turma inválida';
-    } else if (workshop.status !== 'ativa') {
-      errors.group2WorkshopId = 'Esta turma não está disponível';
-    }
-  }
-
-  if (!input.group1WorkshopId && !input.group2WorkshopId) {
-    errors.groups = 'Selecione pelo menos uma turma (Grupo 1 ou Grupo 2)';
-  }
-
-  return errors;
 }
 
-export function createRegistration(
-  input: CreateRegistrationInput,
-  workshops: Workshop[],
-): RegistrationResult {
-  const validationErrors = validateRegistrationInput(input, workshops);
-  if (Object.keys(validationErrors).length > 0) {
-    return { success: false, errors: validationErrors };
-  }
-
-  const { registrations } = getState();
-
-  if (isDuplicatedCpf(registrations, input.cpf)) {
-    return { success: false, errors: { cpf: 'Já existe uma inscrição para este CPF. A mais recente prevalecerá.' } };
-  }
-
-  const registration: Registration = {
-    id: generateId(),
-    participant: {
-      name: input.name.trim(),
-      cpf: normalizeCpf(input.cpf),
-      birthDate: input.birthDate,
-      phone: normalizePhone(input.phone),
-      neighborhood: input.neighborhood,
-    },
-    group1WorkshopId: input.group1WorkshopId,
-    group2WorkshopId: input.group2WorkshopId,
-    status: 'pendente',
-    createdAt: new Date().toISOString(),
-    homologatedAt: null,
-  };
-
-  addRegistration(registration);
-
-  const { active } = resolveDuplications([...registrations, registration]);
-  const previous = active.find(
-    (r) => r.id !== registration.id && normalizeCpf(r.participant.cpf) === registration.participant.cpf,
-  );
-  if (previous) {
-    updateRegistration(previous.id, { status: 'duplicada' });
-  }
-
-  return { success: true, registration, errors: {} };
+/** Busca a lista administrativa (exclui duplicadas; já ordenada por data). */
+export async function refreshRegistrations(): Promise<void> {
+  const registrations = await apiGet<Registration[]>('/admin/registrations', true);
+  setRegistrations(registrations);
 }
 
 export function listRegistrations(): Registration[] {
-  const { registrations } = getState();
-  const { active } = resolveDuplications(registrations);
-  return [...active].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...getState().registrations].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export function listAllRegistrations(): Registration[] {
@@ -145,39 +84,30 @@ export function getRegistrationById(id: string): Registration | undefined {
   return getState().registrations.find((r) => r.id === id);
 }
 
-export function homologateRegistration(id: string, decision: 'homologada' | 'nao_homologada'): boolean {
-  const registration = getState().registrations.find((r) => r.id === id);
-  if (!registration) return false;
-
-  updateRegistration(id, {
-    status: decision,
-    homologatedAt: new Date().toISOString(),
-  });
-
-  return true;
+export async function homologateRegistration(
+  id: string,
+  decision: 'homologada' | 'nao_homologada',
+): Promise<Registration> {
+  const updated = await apiPatch<Registration>(
+    `/admin/registrations/${id}/homologation`,
+    { decision },
+    true,
+  );
+  updateRegistration(id, updated);
+  void refreshStats().catch(() => undefined);
+  return updated;
 }
 
-export function getRegistrationStats() {
-  const { registrations } = getState();
-  const { active } = resolveDuplications(registrations);
-
-  const total = active.length;
-  const homologadas = active.filter((r) => r.status === 'homologada').length;
-  const pendentes = active.filter((r) => r.status === 'pendente').length;
-  const naoHomologadas = active.filter((r) => r.status === 'nao_homologada').length;
-  const duplicadas = registrations.filter((r) => r.status === 'duplicada').length;
-
-  const group1 = active.filter((r) => r.group1WorkshopId).length;
-  const group2 = active.filter((r) => r.group2WorkshopId).length;
-  const bothGroups = active.filter((r) => r.group1WorkshopId && r.group2WorkshopId).length;
-
-  return { total, homologadas, pendentes, naoHomologadas, duplicadas, group1, group2, bothGroups };
+export async function refreshStats(): Promise<void> {
+  const stats = await apiGet<RegistrationStats>('/admin/registrations/stats', true);
+  setStats(stats);
 }
 
-export function getEmailOutbox() {
-  return getState().emailOutbox;
+/** Estatísticas em cache (zeros até a primeira carga). */
+export function getRegistrationStats(): RegistrationStats {
+  return getState().stats ?? EMPTY_STATS;
 }
 
-export function subscribeToRegistrations(listener: () => void) {
+export function subscribeToRegistrations(listener: () => void): () => void {
   return subscribe(listener);
 }

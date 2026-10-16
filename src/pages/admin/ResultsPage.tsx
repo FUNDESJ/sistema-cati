@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { Download, Clock, CheckCircle, Shuffle, Eye } from 'lucide-react';
-import { getDrawResult, hasDrawResult } from '../../services/drawService';
-import { exportDrawResultCsv, downloadCsv } from '../../services/exportService';
+import { useEffect, useSyncExternalStore, useState } from 'react';
+import { Download, Clock, CheckCircle, Shuffle, Eye, AlertCircle } from 'lucide-react';
+import { getDrawResult, hasDrawResult, refreshDrawResults } from '../../services/drawService';
+import { exportDrawResultCsv } from '../../services/exportService';
+import { getState, subscribe } from '../../store';
+import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
@@ -36,22 +38,38 @@ interface EnrichedWaiting {
 }
 
 export function ResultsPage() {
+  useSyncExternalStore(subscribe, getState);
+
   const [selectedGroup, setSelectedGroup] = useState<1 | 2>(1);
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<'turmas' | 'classificacao' | 'espera'>('turmas');
   const [selectedWorkshop, setSelectedWorkshop] = useState<DrawnWorkshopResult | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  useEffect(() => {
+    refreshDrawResults().catch(() => undefined);
+  }, []);
 
   const draw1Done = hasDrawResult(1);
   const draw2Done = hasDrawResult(2);
   const result = getDrawResult(selectedGroup);
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (!result) return;
     setExporting(true);
-    const csv = exportDrawResultCsv(result);
-    downloadCsv(csv, `resultado-grupo-${selectedGroup}-cati-${new Date().toISOString().split('T')[0]}.csv`);
-    setExporting(false);
+    setExportError(null);
+    try {
+      await exportDrawResultCsv(selectedGroup);
+    } catch (error) {
+      setExportError(
+        error instanceof ApiError
+          ? error.message
+          : 'Não foi possível gerar o arquivo. Tente novamente.',
+      );
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (!draw1Done && !draw2Done) {
@@ -119,6 +137,13 @@ export function ResultsPage() {
           Exportar CSV
         </Button>
       </div>
+
+      {exportError && (
+        <div className="flex items-start gap-3 p-4 bg-[#fbeaea] border border-[#a61b1b] rounded-lg" role="alert">
+          <AlertCircle className="h-5 w-5 text-[#a61b1b] flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-[#a61b1b]">{exportError}</p>
+        </div>
+      )}
 
       <div className="bg-white border border-[#d8d8d8] rounded-lg p-4 space-y-4">
         <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">

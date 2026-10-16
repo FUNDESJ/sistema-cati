@@ -1,7 +1,9 @@
+import { useEffect, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { getRegistrationStats } from '../../services/registrationService';
-import { hasDrawResult } from '../../services/drawService';
+import { getRegistrationStats, refreshStats } from '../../services/registrationService';
+import { hasDrawResult, refreshDrawResults } from '../../services/drawService';
+import { getState, subscribe } from '../../store';
 
 interface StatItemProps {
   label: string;
@@ -57,6 +59,13 @@ function DrawStatus({ group, done }: { group: 1 | 2; done: boolean }) {
 }
 
 export function DashboardPage() {
+  useSyncExternalStore(subscribe, getState);
+
+  useEffect(() => {
+    refreshStats().catch(() => undefined);
+    refreshDrawResults().catch(() => undefined);
+  }, []);
+
   const stats = getRegistrationStats();
   const draw1Done = hasDrawResult(1);
   const draw2Done = hasDrawResult(2);

@@ -1,8 +1,6 @@
 import { useLocation, Link } from 'react-router-dom';
 import { CheckCircle2, Calendar, Clock, Info } from 'lucide-react';
-import { maskCpf } from '../../domain/cpf';
-import { formatPhone } from '../../domain/phone';
-import { getWorkshopById } from '../../data/workshops';
+import { getWorkshopById } from '../../services/classService';
 import type { Registration } from '../../types';
 
 export function ConfirmationPage() {
@@ -53,7 +51,8 @@ export function ConfirmationPage() {
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
             <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">CPF</dt>
-            <dd className="text-base font-semibold text-[#1a1a1a] font-mono">{maskCpf(registration.participant.cpf)}</dd>
+            {/* Valor já mascarado pelo servidor (minimização — LGPD) */}
+            <dd className="text-base font-semibold text-[#1a1a1a] font-mono">{registration.participant.cpf}</dd>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
             <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">Data de nascimento</dt>
@@ -61,7 +60,8 @@ export function ConfirmationPage() {
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
             <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">Celular</dt>
-            <dd className="text-base font-semibold text-[#1a1a1a]">{formatPhone(registration.participant.phone)}</dd>
+            {/* Valor já mascarado pelo servidor (minimização — LGPD) */}
+            <dd className="text-base font-semibold text-[#1a1a1a]">{registration.participant.phone}</dd>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-baseline gap-1">
             <dt className="text-sm font-medium text-[#595959] w-40 flex-shrink-0">Bairro</dt>

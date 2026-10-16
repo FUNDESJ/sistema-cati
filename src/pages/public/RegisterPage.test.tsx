@@ -1,10 +1,42 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { RegisterPage } from './RegisterPage';
 import { ConfirmationPage } from './ConfirmationPage';
 import { makeCpf } from '../../data/registrations.mock';
+import { INITIAL_WORKSHOPS } from '../../data/workshops';
+import { setWorkshops } from '../../store';
+import type { Registration } from '../../types';
+
+// Comprovante como o servidor devolve: CPF e celular mascarados (LGPD).
+const fakeRegistration: Registration = {
+  id: 'insc-1730000000000-test01',
+  participant: {
+    name: 'Maria da Silva Teste',
+    cpf: '***.888.***-77',
+    birthDate: '1950-01-01',
+    phone: '(XX) XXXXX-9999',
+    neighborhood: 'Campinas',
+  },
+  group1WorkshopId: INITIAL_WORKSHOPS[0].id,
+  group2WorkshopId: null,
+  status: 'pendente',
+  createdAt: new Date().toISOString(),
+  homologatedAt: null,
+};
+
+vi.mock('../../services/registrationService', () => ({
+  createRegistration: vi.fn(async () => ({
+    success: true,
+    registration: fakeRegistration,
+    errors: {},
+  })),
+}));
+
+beforeEach(() => {
+  setWorkshops([...INITIAL_WORKSHOPS]);
+});
 
 function renderRegisterPage() {
   return render(

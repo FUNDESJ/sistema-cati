@@ -1,9 +1,13 @@
-import { useSyncExternalStore } from 'react';
-import { useState } from 'react';
-import { CheckCircle, XCircle, Eye, Download } from 'lucide-react';
+import { useEffect, useSyncExternalStore, useState } from 'react';
+import { CheckCircle, XCircle, Eye, Download, AlertCircle } from 'lucide-react';
 import { subscribe, getState } from '../../store';
-import { homologateRegistration } from '../../services/registrationService';
-import { resolveDuplications } from '../../domain/registration';
+import {
+  homologateRegistration,
+  refreshRegistrations,
+} from '../../services/registrationService';
+import { getWorkshopById } from '../../services/classService';
+import { exportRegistrationsCsv } from '../../services/exportService';
+import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
@@ -11,13 +15,22 @@ import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
-import { exportRegistrationsCsv, downloadCsv } from '../../services/exportService';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { maskCpf, formatCpf } from '../../domain/cpf';
-import { getWorkshopById } from '../../data/workshops';
 import type { Registration } from '../../types';
 
 function useStore() {
   return useSyncExternalStore(subscribe, getState);
+}
+
+function mutationErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.fields && Object.keys(error.fields).length > 0) {
+      return Object.values(error.fields).join(' ');
+    }
+    return error.message;
+  }
+  return 'Não foi possível concluir a operação. Tente novamente.';
 }
 
 export function RegistrationsPage() {
@@ -28,9 +41,16 @@ export function RegistrationsPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<'homologada' | 'nao_homologada' | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [loading, setLoading] = useState(state.registrations.length === 0);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
-  const { active } = resolveDuplications(state.registrations);
-  const registrations = active.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  useEffect(() => {
+    refreshRegistrations()
+      .catch(() => undefined)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const registrations = [...state.registrations].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const filtered = registrations.filter((r) => {
     const matchesSearch =
@@ -47,20 +67,32 @@ export function RegistrationsPage() {
     setConfirmOpen(true);
   };
 
-  const executeHomologate = () => {
-    if (selectedRegistration && confirmAction) {
-      homologateRegistration(selectedRegistration.id, confirmAction);
+  const executeHomologate = async () => {
+    if (!selectedRegistration || !confirmAction) return;
+    setMutationError(null);
+    try {
+      await homologateRegistration(selectedRegistration.id, confirmAction);
+      setConfirmOpen(false);
+      setSelectedRegistration(null);
+      setConfirmAction(null);
+    } catch (error) {
+      setMutationError(mutationErrorMessage(error));
       setConfirmOpen(false);
       setSelectedRegistration(null);
       setConfirmAction(null);
     }
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     setExporting(true);
-    const csv = exportRegistrationsCsv(state.registrations);
-    downloadCsv(csv, `inscricoes-cati-${new Date().toISOString().split('T')[0]}.csv`);
-    setExporting(false);
+    setMutationError(null);
+    try {
+      await exportRegistrationsCsv();
+    } catch (error) {
+      setMutationError(mutationErrorMessage(error));
+    } finally {
+      setExporting(false);
+    }
   };
 
   const columns = [
@@ -184,13 +216,27 @@ export function RegistrationsPage() {
         </p>
       </div>
 
+      {mutationError && (
+        <div className="flex items-start gap-3 p-4 bg-[#fbeaea] border border-[#a61b1b] rounded-lg" role="alert">
+          <AlertCircle className="h-5 w-5 text-[#a61b1b] flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-[#a61b1b]">{mutationError}</p>
+        </div>
+      )}
+
       <div className="border border-[#d8d8d8] rounded-lg overflow-hidden bg-white">
-        <Table
-          columns={columns}
-          data={filtered}
-          keyExtractor={(r) => r.id}
-          emptyMessage="Nenhuma inscrição encontrada"
-        />
+        {loading ? (
+          <div className="flex items-center justify-center gap-3 py-12" role="status">
+            <LoadingSpinner />
+            <p className="text-sm text-[#595959]">Carregando inscrições…</p>
+          </div>
+        ) : (
+          <Table
+            columns={columns}
+            data={filtered}
+            keyExtractor={(r) => r.id}
+            emptyMessage="Nenhuma inscrição encontrada"
+          />
+        )}
       </div>
 
       {selectedRegistration && (

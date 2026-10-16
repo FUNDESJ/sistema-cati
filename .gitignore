@@ -28,6 +28,7 @@ blob-report
 # Arquivos de ambiente e segredos (variáveis VITE_* são públicas, mas .env não deve ser versionado)
 .env
 .env.*
+!.env.example
 *.local
 
 # Logs

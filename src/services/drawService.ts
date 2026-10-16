@@ -1,27 +1,45 @@
 import type { DrawResult } from '../types';
-import { getState, setDrawResult, subscribe, deleteDrawResult } from '../store';
-import { runDrawForGroup, Rng } from '../domain/draw';
+import { deleteDrawResult, getState, setDrawResult, subscribe } from '../store';
+import { apiDelete, apiGet, apiPost, ApiError } from './api';
 
-let drawInProgress = false;
-
-export function isDrawInProgress(): boolean {
-  return drawInProgress;
+async function fetchDraw(groupId: 1 | 2): Promise<DrawResult | null> {
+  try {
+    return await apiGet<DrawResult>(`/admin/draws/group/${groupId}`, true);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
 }
 
-export function performDraw(groupId: 1 | 2, rng: Rng = Math.random): DrawResult {
-  if (drawInProgress) {
-    throw new Error('Sorteio já em andamento');
-  }
+/**
+ * Atualiza o cache com o resultado vigente de cada grupo (404 = sem sorteio).
+ * Erros de rede/inesperados são registrados sem quebrar a tela.
+ */
+export async function refreshDrawResults(): Promise<void> {
+  const [result1, result2] = await Promise.all([
+    fetchDraw(1).catch((error: unknown) => {
+      console.error('[drawService] falha ao consultar sorteio do grupo 1:', error);
+      return null;
+    }),
+    fetchDraw(2).catch((error: unknown) => {
+      console.error('[drawService] falha ao consultar sorteio do grupo 2:', error);
+      return null;
+    }),
+  ]);
 
-  drawInProgress = true;
-  try {
-    const state = getState();
-    const result = runDrawForGroup(state.registrations, state.workshops, groupId, rng, new Date());
-    setDrawResult(groupId, result);
-    return result;
-  } finally {
-    drawInProgress = false;
-  }
+  if (result1) setDrawResult(1, result1);
+  else deleteDrawResult(1);
+  if (result2) setDrawResult(2, result2);
+  else deleteDrawResult(2);
+}
+
+/** Executa o sorteio do grupo no servidor (uma ação por grupo). */
+export async function performDraw(groupId: 1 | 2): Promise<DrawResult> {
+  const result = await apiPost<DrawResult>(`/admin/draws/group/${groupId}`, undefined, true);
+  setDrawResult(groupId, result);
+  return result;
 }
 
 export function getDrawResult(groupId: 1 | 2): DrawResult | undefined {
@@ -32,10 +50,12 @@ export function hasDrawResult(groupId: 1 | 2): boolean {
   return getState().drawResults.has(groupId);
 }
 
-export function clearDrawResult(groupId: 1 | 2): void {
+/** Torna o resultado não vigente (histórico preservado no servidor). */
+export async function clearDrawResult(groupId: 1 | 2): Promise<void> {
+  await apiDelete(`/admin/draws/group/${groupId}`, true);
   deleteDrawResult(groupId);
 }
 
-export function subscribeToDraws(listener: () => void) {
+export function subscribeToDraws(listener: () => void): () => void {
   return subscribe(listener);
 }

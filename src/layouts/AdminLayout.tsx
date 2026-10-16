@@ -1,6 +1,8 @@
 import { Outlet, Link, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, Shuffle, ListChecks, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { LayoutDashboard, Users, Building2, Shuffle, ListChecks, Menu, X, LogOut } from 'lucide-react';
+import { useSyncExternalStore, useState } from 'react';
+import { getAdminSession, onAuthChange } from '../services/api';
+import { logout } from '../services/authService';
 
 const navItems = [
   { path: '/admin', label: 'Painel', icon: LayoutDashboard },
@@ -12,6 +14,7 @@ const navItems = [
 
 export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const session = useSyncExternalStore(onAuthChange, getAdminSession);
 
   return (
     <div className="min-h-screen bg-[#f4f4f4] lg:flex">
@@ -60,13 +63,29 @@ export function AdminLayout() {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-[#e5e5e5]">
+          <div className="p-4 border-t border-[#e5e5e5] space-y-1">
+            {session && (
+              <p className="px-4 py-2 text-xs text-[#595959] truncate">
+                Conectado como <strong className="text-[#1a1a1a]">{session.name}</strong>
+              </p>
+            )}
             <Link
               to="/"
               className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-1"
             >
               Área pública
             </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setSidebarOpen(false);
+                void logout();
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md text-[#a61b1b] hover:bg-[#fbeaea] transition-colors focus:outline-none focus:ring-2 focus:ring-[#a61b1b] focus:ring-offset-1"
+            >
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              Sair
+            </button>
           </div>
         </div>
       </aside>

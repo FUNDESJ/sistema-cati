@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PublicLayout } from './layouts/PublicLayout';
 import { AdminLayout } from './layouts/AdminLayout';
+import { RequireAdmin } from './components/admin/RequireAdmin';
 import { HomePage } from './pages/public/HomePage';
 import { RegisterPage } from './pages/public/RegisterPage';
 import { ConfirmationPage } from './pages/public/ConfirmationPage';
 import { RulesPage } from './pages/public/RulesPage';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { DashboardPage } from './pages/admin/DashboardPage';
 import { RegistrationsPage } from './pages/admin/RegistrationsPage';
 import { ClassesPage } from './pages/admin/ClassesPage';
@@ -22,7 +24,9 @@ export function App() {
           <Route path="/inscricao/regras" element={<RulesPage />} />
         </Route>
 
-        <Route element={<AdminLayout />}>
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+
+        <Route element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
           <Route path="/admin" element={<DashboardPage />} />
           <Route path="/admin/inscricoes" element={<RegistrationsPage />} />
           <Route path="/admin/turmas" element={<ClassesPage />} />

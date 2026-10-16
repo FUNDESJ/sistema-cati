@@ -1,6 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useSyncExternalStore, useState } from 'react';
 import { Shuffle, AlertCircle, CheckCircle, Clock, ArrowRight, Loader2 } from 'lucide-react';
-import { performDraw, isDrawInProgress, getDrawResult, hasDrawResult, clearDrawResult } from '../../services/drawService';
+import {
+  performDraw,
+  getDrawResult,
+  hasDrawResult,
+  clearDrawResult,
+  refreshDrawResults,
+} from '../../services/drawService';
+import { getState, subscribe } from '../../store';
+import { ApiError } from '../../services/api';
 import { Button } from '../../components/ui/Button';
 import { Badge, StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
@@ -12,26 +20,50 @@ const GROUP_LABELS: Record<1 | 2, string> = {
 };
 
 export function DrawsPage() {
+  useSyncExternalStore(subscribe, getState);
+
   const [drawing, setDrawing] = useState<1 | 2 | null>(null);
   const [showResult, setShowResult] = useState<1 | 2 | null>(null);
   const [confirmClear, setConfirmClear] = useState<1 | 2 | null>(null);
+  const [drawError, setDrawError] = useState<string | null>(null);
 
-  const inProgress = isDrawInProgress();
+  useEffect(() => {
+    refreshDrawResults().catch(() => undefined);
+  }, []);
 
   const handleDraw = async (groupId: 1 | 2) => {
     setDrawing(groupId);
+    setDrawError(null);
     try {
-      performDraw(groupId);
+      await performDraw(groupId);
       setShowResult(groupId);
     } catch (err) {
-      console.error(err);
+      setDrawError(
+        err instanceof ApiError
+          ? err.message
+          : 'Não foi possível executar o sorteio. Tente novamente.',
+      );
     } finally {
       setDrawing(null);
     }
   };
 
   const handleClear = (groupId: 1 | 2) => setConfirmClear(groupId);
-  const executeClear = () => { if (confirmClear) { clearDrawResult(confirmClear); setConfirmClear(null); } };
+  const executeClear = async () => {
+    if (!confirmClear) return;
+    setDrawError(null);
+    try {
+      await clearDrawResult(confirmClear);
+      setConfirmClear(null);
+    } catch (err) {
+      setDrawError(
+        err instanceof ApiError
+          ? err.message
+          : 'Não foi possível limpar o resultado. Tente novamente.',
+      );
+      setConfirmClear(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -39,6 +71,13 @@ export function DrawsPage() {
         <h1 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Realizar Sorteios</h1>
         <p className="mt-1 text-sm text-[#595959]">Execute o sorteio eletrônico para cada grupo</p>
       </div>
+
+      {drawError && (
+        <div className="flex items-start gap-3 p-4 bg-[#fbeaea] border border-[#a61b1b] rounded-lg" role="alert">
+          <AlertCircle className="h-5 w-5 text-[#a61b1b] flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-[#a61b1b]">{drawError}</p>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-px bg-[#d8d8d8] border border-[#d8d8d8] rounded-lg overflow-hidden">
         {([1, 2] as const).map((groupId) => {
@@ -91,7 +130,7 @@ export function DrawsPage() {
                     variant={done ? 'secondary' : 'primary'}
                     fullWidth
                     onClick={() => handleDraw(groupId)}
-                    disabled={inProgress || isDrawing}
+                    disabled={drawing !== null}
                     leftIcon={isDrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shuffle className="h-4 w-4" />}
                   >
                     {isDrawing ? 'Processando… (~2s)' : done ? 'Refazer Sorteio' : 'Realizar Sorteio'}
