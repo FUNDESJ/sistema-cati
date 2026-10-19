@@ -27,13 +27,35 @@ export function ConfirmDialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
+  // Referência estável para onClose: evita que re-renders do componente pai
+  // disparem novamente o efeito de foco inicial.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Foco inicial (botão Cancelar — escolha segura) e restauração.
+  // Executa apenas quando o diálogo abre/fecha.
   useEffect(() => {
     if (!isOpen) return;
 
-    const previousFocus = document.activeElement as HTMLElement;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const timer = window.setTimeout(() => {
+      cancelRef.current?.focus();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+      previousFocus?.focus?.();
+    };
+  }, [isOpen]);
+
+  // Teclado: Esc fecha; Tab permanece dentro do diálogo.
+  useEffect(() => {
+    if (!isOpen) return;
 
     const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') onCloseRef.current();
       if (event.key === 'Tab' && dialogRef.current) {
         const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
           'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled)',
@@ -52,16 +74,8 @@ export function ConfirmDialog({
     };
 
     document.addEventListener('keydown', handleKeydown);
-    const timer = window.setTimeout(() => {
-      cancelRef.current?.focus();
-    }, 0);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeydown);
-      window.clearTimeout(timer);
-      previousFocus?.focus?.();
-    };
-  }, [isOpen, onClose]);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

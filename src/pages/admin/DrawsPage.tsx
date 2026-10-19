@@ -25,6 +25,7 @@ export function DrawsPage() {
   const [drawing, setDrawing] = useState<1 | 2 | null>(null);
   const [showResult, setShowResult] = useState<1 | 2 | null>(null);
   const [confirmClear, setConfirmClear] = useState<1 | 2 | null>(null);
+  const [confirmDraw, setConfirmDraw] = useState<1 | 2 | null>(null);
   const [drawError, setDrawError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,6 +47,18 @@ export function DrawsPage() {
     } finally {
       setDrawing(null);
     }
+  };
+
+  // Dupla confirmação: o clique no botão apenas abre o diálogo; a execução
+  // só acontece após a confirmação explícita.
+  const requestDraw = (groupId: 1 | 2) => {
+    setConfirmDraw(groupId);
+  };
+
+  const executeDraw = () => {
+    const groupId = confirmDraw;
+    setConfirmDraw(null);
+    if (groupId !== null) void handleDraw(groupId);
   };
 
   const handleClear = (groupId: 1 | 2) => setConfirmClear(groupId);
@@ -129,7 +142,7 @@ export function DrawsPage() {
                   <Button
                     variant={done ? 'secondary' : 'primary'}
                     fullWidth
-                    onClick={() => handleDraw(groupId)}
+                    onClick={() => requestDraw(groupId)}
                     disabled={drawing !== null}
                     leftIcon={isDrawing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shuffle className="h-4 w-4" />}
                   >
@@ -167,6 +180,20 @@ export function DrawsPage() {
           <DrawResultContent groupId={showResult} />
         </Modal>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDraw}
+        onClose={() => setConfirmDraw(null)}
+        onConfirm={executeDraw}
+        title="Confirmar sorteio"
+        message={
+          confirmDraw !== null
+            ? `O sorteio eletrônico será executado para TODAS as turmas do ${GROUP_LABELS[confirmDraw]} de uma só vez. Apenas inscrições homologadas participam.${hasDrawResult(confirmDraw) ? ' O resultado atual deste grupo será substituído.' : ''} Deseja continuar?`
+            : ''
+        }
+        confirmText="Realizar Sorteio"
+        variant="default"
+      />
 
       <ConfirmDialog
         isOpen={!!confirmClear}

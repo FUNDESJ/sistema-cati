@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -28,13 +29,35 @@ export function Modal({
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Referência estável para onClose: evita que re-renders do componente pai
+  // (por exemplo, a cada tecla digitada num formulário dentro do modal)
+  // disparem novamente o efeito de foco inicial.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Foco inicial e restauração — executa apenas quando o modal abre/fecha.
   useEffect(() => {
     if (!isOpen) return;
 
-    const previousFocus = document.activeElement as HTMLElement;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const timer = window.setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+      previousFocus?.focus?.();
+    };
+  }, [isOpen]);
+
+  // Teclado: Esc fecha; Tab permanece dentro do diálogo (focus trap).
+  useEffect(() => {
+    if (!isOpen) return;
 
     const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') onCloseRef.current();
       if (event.key === 'Tab' && panelRef.current) {
         const focusable = panelRef.current.querySelectorAll<HTMLElement>(
           'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
@@ -53,16 +76,8 @@ export function Modal({
     };
 
     document.addEventListener('keydown', handleKeydown);
-    const timer = window.setTimeout(() => {
-      closeButtonRef.current?.focus();
-    }, 0);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeydown);
-      window.clearTimeout(timer);
-      previousFocus?.focus?.();
-    };
-  }, [isOpen, onClose]);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -71,9 +86,6 @@ export function Modal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
       role="presentation"
       onClick={closeOnOverlayClick ? onClose : undefined}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose();
-      }}
     >
       <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
       <div
@@ -105,5 +117,5 @@ export function Modal({
     </div>
   );
 
-  return content;
+  return createPortal(content, document.body);
 }

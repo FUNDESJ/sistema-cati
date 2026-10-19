@@ -2,37 +2,46 @@ import type { DrawResult } from '../types';
 import { deleteDrawResult, getState, setDrawResult, subscribe } from '../store';
 import { apiDelete, apiGet, apiPost, ApiError } from './api';
 
-async function fetchDraw(groupId: 1 | 2): Promise<DrawResult | null> {
+type DrawFetchState =
+  | { state: 'found'; result: DrawResult }
+  | { state: 'empty' }
+  | { state: 'error' };
+
+async function fetchDraw(groupId: 1 | 2): Promise<DrawFetchState> {
   try {
-    return await apiGet<DrawResult>(`/admin/draws/group/${groupId}`, true);
+    const result = await apiGet<DrawResult>(`/admin/draws/group/${groupId}`, true);
+    return { state: 'found', result };
   } catch (error) {
+    // 404 = não existe sorteio vigente para o grupo (estado legítimo).
     if (error instanceof ApiError && error.status === 404) {
-      return null;
+      return { state: 'empty' };
     }
-    throw error;
+    // Qualquer outro erro (rede, 401, 500...) NÃO apaga o cache local:
+    // preservar um resultado conhecido é mais seguro do que limpar.
+    console.error(`[drawService] falha ao consultar sorteio do grupo ${groupId}:`, error);
+    return { state: 'error' };
   }
 }
 
 /**
- * Atualiza o cache com o resultado vigente de cada grupo (404 = sem sorteio).
- * Erros de rede/inesperados são registrados sem quebrar a tela.
+ * Atualiza o cache com o resultado vigente de cada grupo.
+ * - 404 → remove do cache (não há sorteio vigente no servidor);
+ * - erro de rede/servidor → preserva o cache local (fail-safe);
+ * - 200 → substitui pelo resultado do servidor (fonte de verdade).
  */
 export async function refreshDrawResults(): Promise<void> {
-  const [result1, result2] = await Promise.all([
-    fetchDraw(1).catch((error: unknown) => {
-      console.error('[drawService] falha ao consultar sorteio do grupo 1:', error);
-      return null;
-    }),
-    fetchDraw(2).catch((error: unknown) => {
-      console.error('[drawService] falha ao consultar sorteio do grupo 2:', error);
-      return null;
-    }),
-  ]);
+  const [draw1, draw2] = await Promise.all([fetchDraw(1), fetchDraw(2)]);
 
-  if (result1) setDrawResult(1, result1);
-  else deleteDrawResult(1);
-  if (result2) setDrawResult(2, result2);
-  else deleteDrawResult(2);
+  const draws: Record<1 | 2, DrawFetchState> = { 1: draw1, 2: draw2 };
+  for (const groupId of [1, 2] as const) {
+    const draw = draws[groupId];
+    if (draw.state === 'found') {
+      setDrawResult(groupId, draw.result);
+    } else if (draw.state === 'empty') {
+      deleteDrawResult(groupId);
+    }
+    // 'error': mantém o estado local intacto.
+  }
 }
 
 /** Executa o sorteio do grupo no servidor (uma ação por grupo). */
