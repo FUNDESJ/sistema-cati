@@ -286,6 +286,21 @@ Essa informação deve ser derivada de forma confiável a partir da data de nasc
 
 Não criar uma regra visual que não esteja refletida na lógica de negócio.
 
+## 13.1 MECANISMO OPERACIONAL DA PRIORIDADE 80+ (definição aprovada pelo responsável em outubro/2026)
+
+A prioridade dos 80+ opera como **precedência na disputa, dentro de cada turma** — não como reserva de vagas.
+
+1. Todos os candidatos cumprem a mesma elegibilidade (homologada, 60+ na referência 05/01/2027, escolha de turma no grupo, sem duplicidade). A condição 80+ é derivada da data de nascimento, nunca declarada manualmente.
+2. O sorteio de cada turma roda em dois estágios: primeiro os 80+ disputam as vagas entre si (ordem aleatória auditável); vagas restantes vão para os 60-79, também aleatórias entre si.
+3. Se os 80+ excederem as vagas da turma, as vagas são sorteadas entre os próprios 80+ e nenhum candidato de 60-79 é classificado naquela turma.
+4. A lista de espera segue a mesma precedência: 80+ no topo, na ordem do sorteio. Quando uma vaga abrir, assumem primeiro.
+5. O resultado registra estatísticas de prioridade por grupo (`priority.candidates/classified/waiting`), cobertas pelo hash de integridade — para prestação de contas e recursos.
+6. O backend grava seed e hash canônico do resultado: o sorteio é reproduzível e verificável.
+
+A prioridade NÃO é cota de vagas, NÃO redistribui candidatos entre turmas (a escolha de turma é do participante e é respeitada) e NÃO altera a independência dos Grupos 1 e 2.
+
+Implementação de referência: `src/domain/draw.ts` (frontend, paridade de testes) e `src/domain/draw.ts` do backend (fonte de verdade em produção).
+
 ---
 
 # 14. HOMOLOGAÇÃO

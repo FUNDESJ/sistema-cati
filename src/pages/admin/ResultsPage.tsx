@@ -10,6 +10,7 @@ import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { Badge, StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
+import { PrioritySummary } from '../../components/PrioritySummary';
 import type { DrawnWorkshopResult } from '../../types';
 
 const GROUP_LABELS: Record<1 | 2, string> = {
@@ -193,6 +194,8 @@ export function ResultsPage() {
             </button>
           ))}
         </div>
+
+        {result && <PrioritySummary result={result} className="mt-4" />}
       </div>
 
       {viewMode === 'turmas' && result && (

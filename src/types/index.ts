@@ -65,12 +65,34 @@ export interface DrawnWorkshopResult {
   waitingList: WaitingListEntry[];
 }
 
+/**
+ * Estatísticas da prioridade 80+ dentro de um grupo.
+ *
+ * Registradas no momento do sorteio (pelo backend) para demonstrar a
+ * aplicação da regra de precedência em prestação de contas e recursos.
+ * Opcional por compatibilidade com resultados anteriores ao campo.
+ */
+export interface DrawPriorityStats {
+  /** Candidatos prioritários elegíveis no grupo (classificados + em espera). */
+  candidates: number;
+  /** Candidatos prioritários classificados em vagas. */
+  classified: number;
+  /** Candidatos prioritários em lista de espera. */
+  waiting: number;
+}
+
 export interface DrawResult {
   groupId: GroupId;
   drawnAt: string;
   totalCandidates: number;
   totalClassified: number;
   totalWaiting: number;
+  /**
+   * Resumo da prioridade 80+ aplicada neste grupo.
+   * Ausente em resultados anteriores à adoção do campo — a interface
+   * recalcula a partir das entradas quando não presente.
+   */
+  priority?: DrawPriorityStats;
   groupClassification: Record<string, number>;
   workshops: DrawnWorkshopResult[];
 }

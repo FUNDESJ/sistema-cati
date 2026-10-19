@@ -13,6 +13,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge, StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { PrioritySummary } from '../../components/PrioritySummary';
 
 const GROUP_LABELS: Record<1 | 2, string> = {
   1: 'Grupo 1 — Atividades Físicas',
@@ -114,20 +115,23 @@ export function DrawsPage() {
                   </p>
 
                   {done && result && (
-                    <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-                      <div className="p-3 bg-[#f4f4f4] rounded">
-                        <p className="text-xs font-medium text-[#595959]">Candidatos</p>
-                        <p className="text-xl font-bold text-[#1a1a1a]">{result.totalCandidates}</p>
+                    <>
+                      <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+                        <div className="p-3 bg-[#f4f4f4] rounded">
+                          <p className="text-xs font-medium text-[#595959]">Candidatos</p>
+                          <p className="text-xl font-bold text-[#1a1a1a]">{result.totalCandidates}</p>
+                        </div>
+                        <div className="p-3 bg-[#e9f4ec] rounded">
+                          <p className="text-xs font-medium text-[#1d6b2f]">Classificados</p>
+                          <p className="text-xl font-bold text-[#1d6b2f]">{result.totalClassified}</p>
+                        </div>
+                        <div className="p-3 bg-[#fbf3e0] rounded">
+                          <p className="text-xs font-medium text-[#8a5a00]">Em espera</p>
+                          <p className="text-xl font-bold text-[#8a5a00]">{result.totalWaiting}</p>
+                        </div>
                       </div>
-                      <div className="p-3 bg-[#e9f4ec] rounded">
-                        <p className="text-xs font-medium text-[#1d6b2f]">Classificados</p>
-                        <p className="text-xl font-bold text-[#1d6b2f]">{result.totalClassified}</p>
-                      </div>
-                      <div className="p-3 bg-[#fbf3e0] rounded">
-                        <p className="text-xs font-medium text-[#8a5a00]">Em espera</p>
-                        <p className="text-xl font-bold text-[#8a5a00]">{result.totalWaiting}</p>
-                      </div>
-                    </div>
+                      <PrioritySummary result={result} className="mt-3" />
+                    </>
                   )}
 
                   {!done && (
@@ -220,6 +224,8 @@ function DrawResultContent({ groupId }: { groupId: 1 | 2 }) {
         <p><span className="font-semibold text-[#1d6b2f]">Classificados:</span> <span className="text-[#3d3d3d]">{result.totalClassified}</span></p>
         <p><span className="font-semibold text-[#8a5a00]">Lista de espera:</span> <span className="text-[#3d3d3d]">{result.totalWaiting}</span></p>
       </div>
+
+      <PrioritySummary result={result} />
 
       <div className="space-y-5">
         <h3 className="text-base font-semibold text-[#1a1a1a]">Turmas</h3>
