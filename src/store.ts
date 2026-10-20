@@ -3,8 +3,6 @@ import type { Registration, Workshop, DrawResult, EmailConfirmation } from './ty
 export interface RegistrationStats {
   total: number;
   homologadas: number;
-  pendentes: number;
-  naoHomologadas: number;
   duplicadas: number;
   group1: number;
   group2: number;

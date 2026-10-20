@@ -3,11 +3,10 @@ import {
   getState,
   subscribe,
   setRegistrations,
-  updateRegistration,
   setStats,
   type RegistrationStats,
 } from '../store';
-import { apiGet, apiPost, apiPatch, ApiError } from './api';
+import { apiGet, apiPost, ApiError } from './api';
 
 export interface CreateRegistrationInput {
   name: string;
@@ -28,8 +27,6 @@ export interface RegistrationResult {
 const EMPTY_STATS: RegistrationStats = {
   total: 0,
   homologadas: 0,
-  pendentes: 0,
-  naoHomologadas: 0,
   duplicadas: 0,
   group1: 0,
   group2: 0,
@@ -82,20 +79,6 @@ export function listAllRegistrations(): Registration[] {
 
 export function getRegistrationById(id: string): Registration | undefined {
   return getState().registrations.find((r) => r.id === id);
-}
-
-export async function homologateRegistration(
-  id: string,
-  decision: 'homologada' | 'nao_homologada',
-): Promise<Registration> {
-  const updated = await apiPatch<Registration>(
-    `/admin/registrations/${id}/homologation`,
-    { decision },
-    true,
-  );
-  updateRegistration(id, updated);
-  void refreshStats().catch(() => undefined);
-  return updated;
 }
 
 export async function refreshStats(): Promise<void> {

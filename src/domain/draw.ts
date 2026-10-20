@@ -83,7 +83,9 @@ export interface DrawEligibilityIssue {
  * Um candidato é apto quando, simultaneamente:
  * 1. Sua inscrição é a vigente do CPF (duplicidades resolvidas —
  *    prevalece a mais recente);
- * 2. Status é `homologada` (pendentes e não homologadas ficam de fora);
+ * 2. Status é `homologada` (desde outubro/2026 a inscrição concluída já
+ *    nasce homologada; o filtro permanece como defesa para registros
+ *    legados do fluxo antigo de homologação);
  * 3. Escolheu uma turma neste grupo;
  * 4. Tem 60+ anos na data de referência 05/01/2027 (defesa em
  *    profundidade: o formulário já valida, mas a regra pertence ao domínio).

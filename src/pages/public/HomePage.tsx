@@ -42,7 +42,6 @@ export function HomePage() {
         <ol className="mt-6 space-y-5">
           {[
             { label: 'Inscrição', desc: 'Preencha o formulário online com seus dados e escolha as turmas desejadas.' },
-            { label: 'Homologação', desc: 'A equipe do CATI valida seus dados antes do sorteio.' },
             { label: 'Sorteio', desc: 'Eletrônico, por grupo, seguindo as regras do edital.' },
             { label: 'Resultado', desc: 'Classificação e lista de espera divulgadas nesta página.' },
           ].map((step, i) => (

@@ -1,20 +1,15 @@
 import { useEffect, useSyncExternalStore, useState } from 'react';
-import { CheckCircle, XCircle, Eye, Download, AlertCircle } from 'lucide-react';
+import { Eye, Download, AlertCircle } from 'lucide-react';
 import { subscribe, getState } from '../../store';
-import {
-  homologateRegistration,
-  refreshRegistrations,
-} from '../../services/registrationService';
+import { refreshRegistrations } from '../../services/registrationService';
 import { getWorkshopById } from '../../services/classService';
 import { exportRegistrationsCsv } from '../../services/exportService';
 import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
-import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { maskCpf, formatCpf } from '../../domain/cpf';
 import type { Registration } from '../../types';
@@ -36,10 +31,7 @@ function mutationErrorMessage(error: unknown): string {
 export function RegistrationsPage() {
   const state = useStore();
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pendente' | 'homologada' | 'nao_homologada'>('all');
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<'homologada' | 'nao_homologada' | null>(null);
   const [exporting, setExporting] = useState(false);
   const [loading, setLoading] = useState(state.registrations.length === 0);
   const [mutationError, setMutationError] = useState<string | null>(null);
@@ -57,31 +49,8 @@ export function RegistrationsPage() {
       r.participant.name.toLowerCase().includes(search.toLowerCase()) ||
       r.participant.cpf.includes(search.replace(/\D/g, '')) ||
       r.participant.phone.includes(search.replace(/\D/g, ''));
-    const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
-
-  const handleHomologate = (registration: Registration, decision: 'homologada' | 'nao_homologada') => {
-    setSelectedRegistration(registration);
-    setConfirmAction(decision);
-    setConfirmOpen(true);
-  };
-
-  const executeHomologate = async () => {
-    if (!selectedRegistration || !confirmAction) return;
-    setMutationError(null);
-    try {
-      await homologateRegistration(selectedRegistration.id, confirmAction);
-      setConfirmOpen(false);
-      setSelectedRegistration(null);
-      setConfirmAction(null);
-    } catch (error) {
-      setMutationError(mutationErrorMessage(error));
-      setConfirmOpen(false);
-      setSelectedRegistration(null);
-      setConfirmAction(null);
-    }
-  };
 
   const handleExport = async () => {
     setExporting(true);
@@ -146,26 +115,6 @@ export function RegistrationsPage() {
       header: 'Ações',
       render: (r: Registration) => (
         <div className="flex items-center gap-1">
-          {r.status === 'pendente' && (
-            <>
-              <button
-                type="button"
-                className="w-10 h-10 flex items-center justify-center rounded-md text-[#1d6b2f] hover:bg-[#e9f4ec] transition-colors"
-                onClick={() => handleHomologate(r, 'homologada')}
-                aria-label={`Homologar inscrição de ${r.participant.name}`}
-              >
-                <CheckCircle className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                className="w-10 h-10 flex items-center justify-center rounded-md text-[#a61b1b] hover:bg-[#fbeaea] transition-colors"
-                onClick={() => handleHomologate(r, 'nao_homologada')}
-                aria-label={`Não homologar inscrição de ${r.participant.name}`}
-              >
-                <XCircle className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </>
-          )}
           <button
             type="button"
             className="w-10 h-10 flex items-center justify-center rounded-md text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a] transition-colors"
@@ -184,7 +133,7 @@ export function RegistrationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Inscrições</h1>
-          <p className="mt-1 text-sm text-[#595959]">Gerencie e homologue as inscrições recebidas</p>
+          <p className="mt-1 text-sm text-[#595959]">Inscrições concluídas — aptas automaticamente para o sorteio</p>
         </div>
         <Button variant="secondary" onClick={handleExport} loading={exporting} leftIcon={<Download className="h-4 w-4" />}>
           Exportar CSV
@@ -197,18 +146,6 @@ export function RegistrationsPage() {
           placeholder="Nome ou CPF"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="sm:max-w-xs"
-        />
-        <Select
-          label="Status"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          options={[
-            { value: 'all', label: 'Todos' },
-            { value: 'pendente', label: 'Pendente' },
-            { value: 'homologada', label: 'Homologada' },
-            { value: 'nao_homologada', label: 'Não homologada' },
-          ]}
           className="sm:max-w-xs"
         />
         <p className="text-sm text-[#595959]">
@@ -302,18 +239,6 @@ export function RegistrationsPage() {
           </dl>
         </Modal>
       )}
-
-      <ConfirmDialog
-        isOpen={confirmOpen}
-        onClose={() => { setConfirmOpen(false); setSelectedRegistration(null); setConfirmAction(null); }}
-        onConfirm={executeHomologate}
-        title={confirmAction === 'homologada' ? 'Homologar inscrição' : 'Não homologar inscrição'}
-        message={confirmAction === 'homologada'
-          ? `Deseja homologar a inscrição de ${selectedRegistration?.participant.name}? Esta inscrição poderá participar do sorteio.`
-          : `Deseja marcar como não homologada a inscrição de ${selectedRegistration?.participant.name}? Ela não participará do sorteio.`}
-        confirmText={confirmAction === 'homologada' ? 'Homologar' : 'Não homologar'}
-        variant={confirmAction === 'homologada' ? 'default' : 'danger'}
-      />
     </div>
   );
 }

@@ -303,18 +303,26 @@ Implementação de referência: `src/domain/draw.ts` (frontend, paridade de test
 
 ---
 
-# 14. HOMOLOGAÇÃO
+# 14. HOMOLOGAÇÃO (etapa extinta em outubro/2026)
 
-O processo possui uma etapa de homologação antes do sorteio.
+O processo NÃO possui mais etapa de homologação administrativa.
 
-A interface administrativa deverá permitir distinguir, de forma clara:
+Regra vigente, aprovada pelo responsável em outubro/2026:
 
-- inscrição recebida;
-- inscrição válida;
-- inscrição homologada;
-- inscrição não homologada.
+> toda inscrição concluída já nasce HOMOLOGADA — o servidor grava
+> `status = 'homologada'` e `homologatedAt = createdAt` no momento da
+> criação. A inscrição concluída está imediatamente apta ao sorteio.
 
-Não permitir que uma inscrição não homologada seja tratada como participante elegível para o sorteio.
+Consequências:
+
+- a interface administrativa não possui ações de homologação;
+- os status operacionais são `homologada` (padrão) e `duplicada`
+  (substituída por inscrição mais recente do mesmo CPF);
+- registros legados `pendente`/`nao_homologada` de antes da mudança
+  permanecem no banco sem interferir; pendentes legadas podem ser
+  regularizadas pelo script `auto-homologate` do backend;
+- o sorteio continua filtrando apenas `homologada` (defesa em
+  profundidade mantida no domínio).
 
 ---
 

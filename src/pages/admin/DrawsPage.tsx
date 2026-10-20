@@ -111,7 +111,7 @@ export function DrawsPage() {
                   <p className="text-sm text-[#595959]">
                     {done
                       ? `Sorteio realizado em ${new Date(result!.drawnAt).toLocaleString('pt-BR')}.`
-                      : 'Aguardando homologação das inscrições e execução do sorteio.'}
+                      : 'Aguardando execução do sorteio.'}
                   </p>
 
                   {done && result && (
@@ -137,7 +137,7 @@ export function DrawsPage() {
                   {!done && (
                     <div className="mt-4 flex gap-2.5 p-3 bg-[#fbf3e0] border border-[#e8d9b0] rounded-lg">
                       <AlertCircle className="h-4 w-4 flex-shrink-0 text-[#8a5a00] mt-0.5" aria-hidden="true" />
-                      <p className="text-sm text-[#3d3d3d]">Apenas inscrições homologadas participam do sorteio.</p>
+                      <p className="text-sm text-[#3d3d3d]">Todas as inscrições concluídas participam do sorteio.</p>
                     </div>
                   )}
                 </div>
@@ -192,7 +192,7 @@ export function DrawsPage() {
         title="Confirmar sorteio"
         message={
           confirmDraw !== null
-            ? `O sorteio eletrônico será executado para TODAS as turmas do ${GROUP_LABELS[confirmDraw]} de uma só vez. Apenas inscrições homologadas participam.${hasDrawResult(confirmDraw) ? ' O resultado atual deste grupo será substituído.' : ''} Deseja continuar?`
+            ? `O sorteio eletrônico será executado para TODAS as turmas do ${GROUP_LABELS[confirmDraw]} de uma só vez. Todas as inscrições concluídas participam.${hasDrawResult(confirmDraw) ? ' O resultado atual deste grupo será substituído.' : ''} Deseja continuar?`
             : ''
         }
         confirmText="Realizar Sorteio"

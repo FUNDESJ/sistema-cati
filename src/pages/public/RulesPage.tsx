@@ -72,7 +72,6 @@ export function RulesPage() {
         <dl className="px-6 py-5 space-y-4">
           {[
             ['Período de inscrições', '01/01/2027 a 31/01/2027'],
-            ['Homologação das inscrições', '01/02/2027 a 04/02/2027'],
             ['Sorteio eletrônico', '05/02/2027'],
             ['Divulgação dos resultados', 'A partir de 06/02/2027'],
           ].map(([dt, dd]) => (
@@ -90,7 +89,7 @@ export function RulesPage() {
         </h2>
         <ul className="px-6 py-5 space-y-4">
           {[
-            'Apenas inscrições homologadas participam do sorteio.',
+            'Participa do sorteio toda inscrição concluída com dados válidos.',
             'O sorteio é realizado por grupo (uma única ação para cada grupo).',
             'Dentro de cada turma, os candidatos são distribuídos nas vagas existentes.',
             'Participantes com 80+ anos são sorteados antes dos demais (prioridade).',

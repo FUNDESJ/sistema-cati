@@ -77,18 +77,16 @@ export function DashboardPage() {
         <p className="mt-1 text-sm text-[#595959]">Visão operacional do processo seletivo CATI 2027</p>
       </div>
 
-      <section aria-label="Indicadores principais" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#d8d8d8] border border-[#d8d8d8] rounded-lg overflow-hidden">
+      <section aria-label="Indicadores principais" className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#d8d8d8] border border-[#d8d8d8] rounded-lg overflow-hidden">
         <StatItem label="Total de inscrições" value={stats.total} href="/admin/inscricoes" />
-        <StatItem label="Homologadas" value={stats.homologadas} href="/admin/inscricoes" />
-        <StatItem label="Pendentes" value={stats.pendentes} href="/admin/inscricoes" />
-        <StatItem label="Não homologadas" value={stats.naoHomologadas} href="/admin/inscricoes" />
+        <StatItem label="Aptas para o sorteio" value={stats.homologadas} href="/admin/inscricoes" />
+        <StatItem label="Duplicadas (ignoradas)" value={stats.duplicadas} href="/admin/inscricoes" />
       </section>
 
-      <section aria-label="Visão por grupo" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#d8d8d8] border border-[#d8d8d8] rounded-lg overflow-hidden">
+      <section aria-label="Visão por grupo" className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#d8d8d8] border border-[#d8d8d8] rounded-lg overflow-hidden">
         <StatItem label="Grupo 1 (Físicas)" value={stats.group1} href="/admin/inscricoes" />
         <StatItem label="Grupo 2 (Socioeducativas)" value={stats.group2} href="/admin/inscricoes" />
         <StatItem label="Ambos os grupos" value={stats.bothGroups} href="/admin/inscricoes" />
-        <StatItem label="Duplicadas (ignoradas)" value={stats.duplicadas} href="/admin/inscricoes" />
       </section>
 
       <section aria-label="Ações principais" className="border border-[#d8d8d8] rounded-lg bg-white p-5">
