@@ -1,7 +1,7 @@
 import { useEffect, useSyncExternalStore, useState } from 'react';
 import { Download, Clock, CheckCircle, Shuffle, Eye, AlertCircle } from 'lucide-react';
 import { getDrawResult, hasDrawResult, refreshDrawResults } from '../../services/drawService';
-import { exportDrawResultCsv } from '../../services/exportService';
+import { exportDrawResultXlsx } from '../../services/exportService';
 import { getState, subscribe } from '../../store';
 import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
@@ -61,7 +61,7 @@ export function ResultsPage() {
     setExporting(true);
     setExportError(null);
     try {
-      await exportDrawResultCsv(selectedGroup);
+      await exportDrawResultXlsx(selectedGroup);
     } catch (error) {
       setExportError(
         error instanceof ApiError
@@ -135,7 +135,7 @@ export function ResultsPage() {
           <p className="mt-1 text-sm text-[#595959]">Visualize classificação, listas de espera e exporte os dados</p>
         </div>
         <Button variant="secondary" onClick={handleExport} loading={exporting} leftIcon={<Download className="h-4 w-4" />} disabled={!result}>
-          Exportar CSV
+          Exportar Planilha (.xlsx)
         </Button>
       </div>
 
