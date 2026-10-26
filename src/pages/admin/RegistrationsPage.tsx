@@ -1,18 +1,21 @@
-import { useEffect, useSyncExternalStore, useState } from 'react';
-import { Eye, Download, AlertCircle } from 'lucide-react';
+import { useEffect, useMemo, useSyncExternalStore, useState } from 'react';
+import { Eye, Download, AlertCircle, FilterX } from 'lucide-react';
 import { subscribe, getState } from '../../store';
 import { refreshRegistrations } from '../../services/registrationService';
-import { getWorkshopById } from '../../services/classService';
+import { getWorkshopById, listWorkshops, refreshAdminWorkshops } from '../../services/classService';
 import { exportRegistrationsCsv } from '../../services/exportService';
 import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { maskCpf, formatCpf } from '../../domain/cpf';
 import type { Registration } from '../../types';
+
+type GroupFilter = 'all' | 'g1' | 'g2' | 'both';
 
 function useStore() {
   return useSyncExternalStore(subscribe, getState);
@@ -28,9 +31,40 @@ function mutationErrorMessage(error: unknown): string {
   return 'Não foi possível concluir a operação. Tente novamente.';
 }
 
+function matchesGroupFilter(registration: Registration, group: GroupFilter): boolean {
+  const hasG1 = registration.group1WorkshopId !== null;
+  const hasG2 = registration.group2WorkshopId !== null;
+  switch (group) {
+    case 'g1':
+      return hasG1;
+    case 'g2':
+      return hasG2;
+    case 'both':
+      return hasG1 && hasG2;
+    default:
+      return true;
+  }
+}
+
+function matchesActivityFilter(
+  registration: Registration,
+  activityId: string,
+): boolean {
+  const g1 = registration.group1WorkshopId
+    ? getWorkshopById(registration.group1WorkshopId)
+    : undefined;
+  const g2 = registration.group2WorkshopId
+    ? getWorkshopById(registration.group2WorkshopId)
+    : undefined;
+  return g1?.activityId === activityId || g2?.activityId === activityId;
+}
+
 export function RegistrationsPage() {
   const state = useStore();
   const [search, setSearch] = useState('');
+  const [neighborhoodFilter, setNeighborhoodFilter] = useState('all');
+  const [groupFilter, setGroupFilter] = useState<GroupFilter>('all');
+  const [activityFilter, setActivityFilter] = useState('all');
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [exporting, setExporting] = useState(false);
   const [loading, setLoading] = useState(state.registrations.length === 0);
@@ -40,17 +74,55 @@ export function RegistrationsPage() {
     refreshRegistrations()
       .catch(() => undefined)
       .finally(() => setLoading(false));
+    if (getState().workshops.length === 0) {
+      refreshAdminWorkshops().catch(() => undefined);
+    }
   }, []);
 
   const registrations = [...state.registrations].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  const neighborhoodOptions = useMemo(() => {
+    const unique = [...new Set(registrations.map((r) => r.participant.neighborhood))].sort((a, b) => a.localeCompare(b));
+    return [
+      { value: 'all', label: 'Todos os bairros' },
+      ...unique.map((name) => ({ value: name, label: name })),
+    ];
+  }, [registrations]);
+
+  const activityOptions = useMemo(() => {
+    const byId = new Map<string, string>();
+    for (const workshop of listWorkshops()) {
+      byId.set(workshop.activityId, workshop.activityName);
+    }
+    const sorted = [...byId.entries()].sort(([, nameA], [, nameB]) => nameA.localeCompare(nameB));
+    return [
+      { value: 'all', label: 'Todas as atividades' },
+      ...sorted.map(([id, name]) => ({ value: id, label: name })),
+    ];
+  }, [state.workshops]);
 
   const filtered = registrations.filter((r) => {
     const matchesSearch =
       r.participant.name.toLowerCase().includes(search.toLowerCase()) ||
       r.participant.cpf.includes(search.replace(/\D/g, '')) ||
       r.participant.phone.includes(search.replace(/\D/g, ''));
-    return matchesSearch;
+    const matchesNeighborhood =
+      neighborhoodFilter === 'all' || r.participant.neighborhood === neighborhoodFilter;
+    const matchesGroup = matchesGroupFilter(r, groupFilter);
+    const matchesActivity =
+      activityFilter === 'all' || matchesActivityFilter(r, activityFilter);
+    return matchesSearch && matchesNeighborhood && matchesGroup && matchesActivity;
   });
+
+  const hasActiveFilters =
+    neighborhoodFilter !== 'all' || groupFilter !== 'all' || activityFilter !== 'all' || search !== '';
+
+  const clearFilters = () => {
+    setSearch('');
+    setNeighborhoodFilter('all');
+    setGroupFilter('all');
+    setActivityFilter('all');
+  };
 
   const handleExport = async () => {
     setExporting(true);
@@ -148,7 +220,38 @@ export function RegistrationsPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="sm:max-w-xs"
         />
-        <p className="text-sm text-[#595959]">
+        <Select
+          label="Bairro"
+          value={neighborhoodFilter}
+          onChange={(e) => setNeighborhoodFilter(e.target.value)}
+          options={neighborhoodOptions}
+          className="sm:max-w-xs"
+        />
+        <Select
+          label="Grupo"
+          value={groupFilter}
+          onChange={(e) => setGroupFilter(e.target.value as GroupFilter)}
+          options={[
+            { value: 'all', label: 'Todos os grupos' },
+            { value: 'g1', label: 'Somente Grupo 1' },
+            { value: 'g2', label: 'Somente Grupo 2' },
+            { value: 'both', label: 'Ambos os grupos' },
+          ]}
+          className="sm:max-w-xs"
+        />
+        <Select
+          label="Atividade"
+          value={activityFilter}
+          onChange={(e) => setActivityFilter(e.target.value)}
+          options={activityOptions}
+          className="sm:max-w-xs"
+        />
+        {hasActiveFilters && (
+          <Button variant="ghost" onClick={clearFilters} leftIcon={<FilterX className="h-4 w-4" />}>
+            Limpar filtros
+          </Button>
+        )}
+        <p className="text-sm text-[#595959] sm:ml-auto">
           Mostrando <strong>{filtered.length}</strong> de <strong>{registrations.length}</strong> inscrições
         </p>
       </div>
