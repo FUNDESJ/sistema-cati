@@ -46,8 +46,7 @@ export function RulesPage() {
               <li>Ginástica</li>
               <li>Ginástica na Cadeira</li>
               <li>Hidroginástica</li>
-              <li>Pilates Solo</li>
-              <li>Pilates Funcional</li>
+              <li>Alongamento e Autonomia</li>
               <li>Ginástica/Dance</li>
             </ul>
           </div>
@@ -56,6 +55,7 @@ export function RulesPage() {
             <ul className="mt-3 space-y-1.5 text-[0.9375rem] text-[#3d3d3d]">
               <li>Teatro</li>
               <li>Canto</li>
+              <li>Cerâmica</li>
             </ul>
           </div>
         </div>

@@ -113,25 +113,25 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
     expect(texts.filter((t) => t.includes('Segundas e Quartas'))).toHaveLength(3);
     expect(texts.filter((t) => t.includes('Terças e Quintas'))).toHaveLength(3);
     expect(texts.some((t) => t.includes('08:00'))).toBe(false);
-    expect(texts.some((t) => t.includes('Pilates'))).toBe(false);
+    expect(texts.some((t) => t.includes('Alongamento'))).toBe(false);
     expect(texts.some((t) => t.includes('Ginástica'))).toBe(false);
   });
 
-  it('Grupo 1: selecionar Pilates Solo mostra somente turmas de Pilates Solo', async () => {
+  it('Grupo 1: selecionar Alongamento e Autonomia mostra somente turmas de Alongamento e Autonomia', async () => {
     const user = userEvent.setup();
     renderRegisterPage();
 
     const activitySelect = getComboboxByName(/Grupo 1.*Escolha uma atividade/);
-    await user.selectOptions(activitySelect, 'pilates-solo');
+    await user.selectOptions(activitySelect, 'alongamento-autonomia');
 
     const workshopSelect = getComboboxByName(/Grupo 1.*Escolha o dia e horário/);
 
     await waitFor(() => expect(workshopSelect).toBeEnabled());
 
     const texts = getOptionTexts(workshopSelect);
-    expect(texts).toHaveLength(7);
-    expect(texts.filter((t) => t.includes('Segundas e Quartas'))).toHaveLength(3);
-    expect(texts.filter((t) => t.includes('Terças e Quintas'))).toHaveLength(3);
+    expect(texts).toHaveLength(12);
+    expect(texts.filter((t) => t.includes('Segundas e Quartas'))).toHaveLength(5);
+    expect(texts.filter((t) => t.includes('Terças e Quintas'))).toHaveLength(6);
     expect(texts.some((t) => t.includes('Dança'))).toBe(false);
     expect(texts.some((t) => t.includes('Hidro'))).toBe(false);
   });
@@ -150,13 +150,13 @@ describe('RegisterPage — seleção dinâmica de atividade e turma', () => {
     await user.selectOptions(workshopSelect, dancaOptions[1]);
     expect(workshopSelect.value).toBe(dancaOptions[1]);
 
-    await user.selectOptions(activitySelect, 'pilates-solo');
+    await user.selectOptions(activitySelect, 'alongamento-autonomia');
 
     await waitFor(() => expect(workshopSelect.value).toBe(''));
 
     const turmaTexts = getOptionTexts(workshopSelect).filter((t) => t !== 'Selecione o dia e horário');
     expect(turmaTexts.every((t) => !t.includes('Dança'))).toBe(true);
-    expect(turmaTexts).toHaveLength(6);
+    expect(turmaTexts).toHaveLength(11);
   });
 
   it('Grupo 2: selecionar Teatro mostra somente turmas de Teatro', async () => {

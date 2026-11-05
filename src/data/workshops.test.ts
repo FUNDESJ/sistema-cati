@@ -17,23 +17,23 @@ describe('getWorkshopsByActivity — Grupo 1', () => {
     expect(workshops.every((w) => w.activityName === 'Dança de Salão')).toBe(true);
   });
 
-  it('selecionar Pilates Solo retorna somente turmas de Pilates Solo', () => {
-    const workshops = getWorkshopsByActivity('pilates-solo');
+  it('selecionar Alongamento e Autonomia retorna somente turmas de Alongamento e Autonomia', () => {
+    const workshops = getWorkshopsByActivity('alongamento-autonomia');
 
-    expect(workshops).toHaveLength(6);
-    expect(workshops.every((w) => w.activityId === 'pilates-solo')).toBe(true);
-    expect(workshops.every((w) => w.activityName === 'Pilates Solo')).toBe(true);
+    expect(workshops).toHaveLength(11);
+    expect(workshops.every((w) => w.activityId === 'alongamento-autonomia')).toBe(true);
+    expect(workshops.every((w) => w.activityName === 'Alongamento e Autonomia')).toBe(true);
   });
 
   it('turmas de atividades diferentes não se misturam', () => {
     const dancaSalao = getWorkshopsByActivity('danca-salao');
-    const pilatesSolo = getWorkshopsByActivity('pilates-solo');
+    const alongamento = getWorkshopsByActivity('alongamento-autonomia');
 
     const dancaIds = new Set(dancaSalao.map((w) => w.id));
-    const pilatesIds = new Set(pilatesSolo.map((w) => w.id));
+    const alongamentoIds = new Set(alongamento.map((w) => w.id));
 
     for (const id of dancaIds) {
-      expect(pilatesIds.has(id)).toBe(false);
+      expect(alongamentoIds.has(id)).toBe(false);
     }
   });
 

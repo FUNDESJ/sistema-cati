@@ -85,27 +85,20 @@ const SEEDS: WorkshopSeed[] = [
     ],
   },
   {
-    activityId: 'pilates-solo',
+    activityId: 'alongamento-autonomia',
     groupId: 1,
     slots: [
       ['Segundas e Quartas', '08:00', 9],
       ['Segundas e Quartas', '09:15', 9],
       ['Segundas e Quartas', '10:30', 9],
+      ['Segundas e Quartas', '13:30', 9],
+      ['Segundas e Quartas', '15:30', 9],
       ['Terças e Quintas', '08:00', 9],
       ['Terças e Quintas', '09:15', 9],
       ['Terças e Quintas', '10:30', 9],
-    ],
-  },
-  {
-    activityId: 'pilates-funcional',
-    groupId: 1,
-    slots: [
-      ['Segundas e Quartas', '13:30', 9],
-      ['Segundas e Quartas', '14:30', 9],
-      ['Segundas e Quartas', '15:45', 9],
       ['Terças e Quintas', '13:30', 9],
       ['Terças e Quintas', '14:30', 9],
-      ['Terças e Quintas', '15:45', 9],
+      ['Terças e Quintas', '15:30', 9],
     ],
   },
   {
@@ -144,6 +137,20 @@ const SEEDS: WorkshopSeed[] = [
       ['Segundas e Quartas', '15:10', 7],
       ['Quintas', '13:30', 7],
       ['Quintas', '15:15', 7],
+    ],
+  },
+  {
+    activityId: 'ceramica',
+    groupId: 2,
+    slots: [
+      ['Segundas e Quartas', '08:30', 10],
+      ['Segundas e Quartas', '10:00', 10],
+      ['Terças e Quintas', '08:30', 10],
+      ['Terças e Quintas', '10:10', 10],
+      ['Segundas e Quartas', '13:30', 10],
+      ['Segundas e Quartas', '15:00', 10],
+      ['Terças e Quintas', '13:30', 10],
+      ['Terças e Quintas', '15:00', 10],
     ],
   },
 ];

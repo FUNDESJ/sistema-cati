@@ -107,7 +107,7 @@ export function buildMockRegistrations(): Registration[] {
   });
 
   const duplicateSource = registrations[0];
-  const dupWorkshopG1 = workshopsG1.find((w) => w.activityId === 'pilates-solo')?.id ?? null;
+  const dupWorkshopG1 = workshopsG1.find((w) => w.activityId === 'alongamento-autonomia')?.id ?? null;
   const dupWorkshopG2 = workshopsG2.find((w) => w.activityId === 'canto')?.id ?? null;
   push(
     duplicateSource.participant.name,
