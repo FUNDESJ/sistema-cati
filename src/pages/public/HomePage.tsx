@@ -17,6 +17,21 @@ export function HomePage() {
         <p className="mt-3 text-base sm:text-lg text-[#3d3d3d] max-w-2xl leading-relaxed">
           Centro de Atendimento à Terceira Idade — processo seletivo para atividades físicas e socioeducativas.
         </p>
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:items-center gap-3">
+          <Link
+            to="/inscricao"
+            className="inline-flex items-center gap-2 min-h-[48px] w-full sm:w-auto px-6 py-3 text-base font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] active:bg-[#450a0c] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 justify-center"
+          >
+            Fazer Inscrição
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          </Link>
+          <Link
+            to="/inscricao/regras"
+            className="inline-flex items-center gap-2 min-h-[48px] w-full sm:w-auto px-6 py-3 text-base font-semibold rounded-md border border-[#d8d8d8] text-[#1a1a1a] bg-white hover:bg-[#fafafa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 justify-center"
+          >
+            Ver regras completas
+          </Link>
+        </div>
       </section>
 
       <section aria-label="Informações rápidas">
