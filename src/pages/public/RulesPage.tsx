@@ -71,8 +71,9 @@ export function RulesPage() {
         </h2>
         <dl className="px-6 py-5 space-y-4">
           {[
-            ['Período de inscrições', '01/01/2027 a 31/01/2027'],
-            ['Sorteio eletrônico', '05/02/2027'],
+            ['Inscrições online', '10/12/2026 a 15/12/2026'],
+            ['Plantão presencial de inscrição', '05/01/2027 a 08/01/2027'],
+            ['Sorteio eletrônico', '01/02/2027'],
             ['Divulgação dos resultados', 'A partir de 06/02/2027'],
           ].map(([dt, dd]) => (
             <div key={dt} className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
