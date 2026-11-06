@@ -11,9 +11,21 @@ export function HomePage() {
   return (
     <div className="space-y-10">
       <section>
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] tracking-tight">
-          Inscrições e Sorteios <span className="text-[#006F44]">CATI 2027</span>
-        </h1>
+        <div className="flex items-center gap-3 sm:gap-4 mb-4">
+          <img
+            src="/assets/logo-prefeitura-usj.jpeg"
+            alt="Prefeitura de São José"
+            className="h-10 w-auto"
+          />
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#006F44] mb-0.5">
+              Prefeitura de São José
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] tracking-tight leading-none">
+              Inscrições e Sorteios <span className="text-[#006F44]">CATI 2027</span>
+            </h1>
+          </div>
+        </div>
         <p className="mt-3 text-base sm:text-lg text-[#3d3d3d] max-w-2xl leading-relaxed">
           Centro de Atendimento à Terceira Idade — processo seletivo para atividades físicas e socioeducativas.
         </p>

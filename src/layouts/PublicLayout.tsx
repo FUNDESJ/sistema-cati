@@ -15,11 +15,6 @@ export function PublicLayout() {
               className="inline-flex items-baseline gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#006F44] rounded-md"
               aria-label="CATI 2027 — Página inicial"
             >
-              <img
-                src="/assets/logo-prefeitura-usj.jpeg"
-                alt="Prefeitura de São José"
-                className="h-8 w-auto"
-              />
               <span className="text-lg font-bold tracking-tight leading-none">CATI 2027</span>
               <span className="text-xs uppercase tracking-widest text-white/75">Inscrições</span>
             </Link>
