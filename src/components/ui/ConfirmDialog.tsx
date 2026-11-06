@@ -105,7 +105,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onClose}
-            className="flex-shrink-0 p-2 rounded-md text-[#595959] hover:text-[#1a1a1a] hover:bg-[#f4f4f4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 min-w-[40px] min-h-[40px] flex items-center justify-center"
+            className="flex-shrink-0 p-2 rounded-md text-[#595959] hover:text-[#1a1a1a] hover:bg-[#f4f4f4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2 min-w-[40px] min-h-[40px] flex items-center justify-center"
             aria-label="Fechar"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -121,7 +121,7 @@ export function ConfirmDialog({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="min-h-[44px] px-5 py-2.5 text-[0.9375rem] font-semibold rounded-md border border-[#d8d8d8] bg-white text-[#3d3d3d] hover:bg-[#f4f4f4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 disabled:opacity-55 disabled:cursor-not-allowed"
+              className="min-h-[44px] px-5 py-2.5 text-[0.9375rem] font-semibold rounded-md border border-[#d8d8d8] bg-white text-[#3d3d3d] hover:bg-[#f4f4f4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2 disabled:opacity-55 disabled:cursor-not-allowed"
             >
               {cancelText}
             </button>
@@ -135,7 +135,7 @@ export function ConfirmDialog({
                 disabled:opacity-55 disabled:cursor-not-allowed
                 ${variant === 'danger'
                   ? 'bg-[#a61b1b] hover:bg-[#8a1616] focus:ring-[#a61b1b]'
-                  : 'bg-[#7b1113] hover:bg-[#5c0d0f] focus:ring-[#7b1113]'
+                  : 'bg-[#006F44] hover:bg-[#005A37] focus:ring-[#006F44]'
                 }
               `}
             >

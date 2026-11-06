@@ -36,7 +36,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             disabled:bg-[#f4f4f4] disabled:text-[#595959] disabled:cursor-not-allowed
             ${error
               ? 'border-[#a61b1b] focus:outline-none focus:border-[#a61b1b] focus:shadow-[0_0_0_3px_rgb(166_27_27/0.15)]'
-              : 'border-[#b8b8b8] hover:border-[#595959] focus:outline-none focus:border-[#7b1113] focus:shadow-[0_0_0_3px_rgb(123_17_19/0.15)]'
+              : 'border-[#b8b8b8] hover:border-[#595959] focus:outline-none focus:border-[#006F44] focus:shadow-[0_0_0_3px_rgb(0_111_68/0.15)]'
             }
           `}
           aria-invalid={error ? 'true' : 'false'}

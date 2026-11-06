@@ -30,7 +30,7 @@ export function AdminLayout() {
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between h-16 px-5 border-b border-[#e5e5e5]">
             <div className="leading-tight">
-              <p className="text-base font-bold text-[#7b1113]">CATI 2027</p>
+              <p className="text-base font-bold text-[#006F44]">CATI 2027</p>
               <p className="text-xs font-medium text-[#595959] uppercase tracking-widest">Administração</p>
             </div>
             <button
@@ -51,9 +51,9 @@ export function AdminLayout() {
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) => `
                   flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-colors
-                  focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-1
+                  focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-1
                   ${isActive
-                    ? 'bg-[#7b1113] text-white'
+                    ? 'bg-[#006F44] text-white'
                     : 'text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a]'}
                 `}
               >
@@ -71,7 +71,7 @@ export function AdminLayout() {
             )}
             <Link
               to="/"
-              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-1"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md text-[#3d3d3d] hover:bg-[#f4f4f4] hover:text-[#1a1a1a] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-1"
             >
               Área pública
             </Link>
@@ -103,7 +103,7 @@ export function AdminLayout() {
             >
               <Menu className="h-6 w-6" />
             </button>
-            <p className="text-sm font-bold text-[#7b1113]">CATI 2027</p>
+            <p className="text-sm font-bold text-[#006F44]">CATI 2027</p>
             <div className="w-9" aria-hidden="true" />
           </div>
         </header>

@@ -8,7 +8,7 @@ interface BadgeProps {
 
 const variantClasses: Record<BadgeVariant, string> = {
   neutral: 'bg-[#f4f4f4] text-[#3d3d3d] border border-[#d8d8d8]',
-  primary: 'bg-[#fdf0f0] text-[#7b1113] border border-[#e5c6c8]',
+  primary: 'bg-[#e8f3ee] text-[#006F44] border border-[#c7e3d4]',
   success: 'bg-[#e9f4ec] text-[#1d6b2f] border border-[#c9e2d0]',
   warning: 'bg-[#fbf3e0] text-[#8a5a00] border border-[#e8d9b0]',
   danger: 'bg-[#fbeaea] text-[#a61b1b] border border-[#ecc7c7]',

@@ -167,8 +167,8 @@ export function RegistrationsPage() {
       header: 'Grupo(s)',
       render: (r: Registration) => (
         <div className="flex gap-1.5">
-          {r.group1WorkshopId && <span className="text-xs font-semibold text-[#7b1113]">G1</span>}
-          {r.group2WorkshopId && <span className="text-xs font-semibold text-[#7b1113]">G2</span>}
+          {r.group1WorkshopId && <span className="text-xs font-semibold text-[#006F44]">G1</span>}
+          {r.group2WorkshopId && <span className="text-xs font-semibold text-[#006F44]">G2</span>}
         </div>
       ),
     },

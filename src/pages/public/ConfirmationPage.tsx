@@ -17,7 +17,7 @@ export function ConfirmationPage() {
         <p className="text-sm text-[#595959] mb-6">Volte à página inicial e faça sua inscrição.</p>
         <Link
           to="/inscricao"
-          className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 text-sm font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] transition-colors"
+          className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 text-sm font-semibold rounded-md bg-[#006F44] text-white hover:bg-[#005A37] transition-colors"
         >
           Fazer Inscrição
         </Link>
@@ -77,7 +77,7 @@ export function ConfirmationPage() {
         <div className="p-6 space-y-5">
           {group1Workshop ? (
             <div className="pb-5 border-b border-[#e5e5e5]">
-              <p className="text-xs font-medium uppercase tracking-widest text-[#7b1113]">Grupo 1 — Atividades Físicas</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-[#006F44]">Grupo 1 — Atividades Físicas</p>
               <p className="mt-1 text-base font-semibold text-[#1a1a1a]">{group1Workshop.activityName}</p>
               <div className="mt-2 flex items-center gap-4 text-sm text-[#595959]">
                 <span className="inline-flex items-center gap-1.5">
@@ -94,7 +94,7 @@ export function ConfirmationPage() {
 
           {group2Workshop ? (
             <div>
-              <p className="text-xs font-medium uppercase tracking-widest text-[#7b1113]">Grupo 2 — Atividades Socioeducativas</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-[#006F44]">Grupo 2 — Atividades Socioeducativas</p>
               <p className="mt-1 text-base font-semibold text-[#1a1a1a]">{group2Workshop.activityName}</p>
               <div className="mt-2 flex items-center gap-4 text-sm text-[#595959]">
                 <span className="inline-flex items-center gap-1.5">
@@ -115,26 +115,26 @@ export function ConfirmationPage() {
         </div>
       </section>
 
-      <div className="bg-[#fdf0f0] border border-[#e5c6c8] rounded-lg p-5">
-        <p className="text-sm text-[#7b1113]">
+      <div className="bg-[#e8f3ee] border border-[#c7e3d4] rounded-lg p-5">
+        <p className="text-sm text-[#006F44]">
           <strong>Identificação da inscrição:</strong>{' '}
-          <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-[#e5c6c8]">
+          <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-[#c7e3d4]">
             {registration.id}
           </code>
         </p>
-        <p className="mt-1.5 text-sm text-[#7b1113]">Guarde este número para acompanhamento.</p>
+        <p className="mt-1.5 text-sm text-[#006F44]">Guarde este número para acompanhamento.</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
         <Link
           to="/inscricao"
-          className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 text-sm font-semibold rounded-md border border-[#7b1113] text-[#7b1113] bg-white hover:bg-[#fdf0f0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+          className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 text-sm font-semibold rounded-md border border-[#006F44] text-[#006F44] bg-white hover:bg-[#e8f3ee] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
         >
           Nova Inscrição
         </Link>
         <Link
           to="/"
-          className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 text-sm font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+          className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 text-sm font-semibold rounded-md bg-[#006F44] text-white hover:bg-[#005A37] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
         >
           Voltar ao Início
         </Link>

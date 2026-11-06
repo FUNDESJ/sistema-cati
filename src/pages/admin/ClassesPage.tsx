@@ -153,7 +153,7 @@ export function ClassesPage() {
 
   const columns = [
     { key: 'activityName', header: 'Atividade', render: (w: Workshop) => <p className="font-semibold text-[#1a1a1a]">{w.activityName}</p> },
-    { key: 'groupId', header: 'Grupo', render: (w: Workshop) => <span className="text-xs font-semibold text-[#7b1113]">{w.groupId === 1 ? 'G1' : 'G2'}</span> },
+    { key: 'groupId', header: 'Grupo', render: (w: Workshop) => <span className="text-xs font-semibold text-[#006F44]">{w.groupId === 1 ? 'G1' : 'G2'}</span> },
     { key: 'days', header: 'Dias', render: (w: Workshop) => w.days },
     { key: 'startTime', header: 'Horário', render: (w: Workshop) => w.startTime },
     { key: 'vacancies', header: 'Vagas', render: (w: Workshop) => <span className="font-mono text-[#1a1a1a]">{w.vacancies}</span> },

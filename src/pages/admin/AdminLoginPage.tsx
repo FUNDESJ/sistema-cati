@@ -48,12 +48,12 @@ export function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#f4f4f4] flex flex-col">
-      <header className="bg-[#7b1113] text-white">
+      <header className="bg-[#006F44] text-white">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <p className="text-base font-bold tracking-tight">CATI 2027 · Administração</p>
           <Link
             to="/"
-            className="text-sm font-medium text-white/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-[#7b1113] rounded px-2 py-1 transition-colors"
+            className="text-sm font-medium text-white/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-[#006F44] rounded px-2 py-1 transition-colors"
           >
             Área pública
           </Link>
@@ -65,8 +65,8 @@ export function AdminLoginPage() {
           <div className="bg-white border border-[#d8d8d8] rounded-lg overflow-hidden">
             <div className="px-6 py-5 border-b border-[#e5e5e5] bg-[#fafafa]">
               <div className="flex items-center gap-3">
-                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#fdf0f0]" aria-hidden="true">
-                  <Lock className="h-5 w-5 text-[#7b1113]" />
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#e8f3ee]" aria-hidden="true">
+                  <Lock className="h-5 w-5 text-[#006F44]" />
                 </span>
                 <div>
                   <h1 className="text-lg font-bold text-[#1a1a1a] tracking-tight">Acesso restrito</h1>

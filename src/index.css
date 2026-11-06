@@ -2,10 +2,10 @@
 
 @theme {
   /* ── Cores institucionais CATI / FUNDESJ ─────────────────────────── */
-  --color-primary: #7b1113;
-  --color-primary-hover: #5c0d0f;
-  --color-primary-pressed: #450a0c;
-  --color-primary-soft: #fdf0f0;
+  --color-primary: #006F44;
+  --color-primary-hover: #005A37;
+  --color-primary-pressed: #00452A;
+  --color-primary-soft: #e8f3ee;
   --color-on-primary: #ffffff;
 
   /* ── Neutros ─────────────────────────────────────────────────────── */

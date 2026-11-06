@@ -7,14 +7,19 @@ export function PublicLayout() {
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a]">
-      <header className="bg-[#7b1113] text-white">
+      <header className="bg-[#006F44] text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               to="/"
-              className="inline-flex items-baseline gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#7b1113] rounded-md"
+              className="inline-flex items-baseline gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#006F44] rounded-md"
               aria-label="CATI 2027 — Página inicial"
             >
+              <img
+                src="/assets/logo-prefeitura-usj.jpeg"
+                alt="Prefeitura de São José"
+                className="h-8 w-auto"
+              />
               <span className="text-lg font-bold tracking-tight leading-none">CATI 2027</span>
               <span className="text-xs uppercase tracking-widest text-white/75">Inscrições</span>
             </Link>
@@ -30,7 +35,7 @@ export function PublicLayout() {
                   to={item.to}
                   className={({ isActive }) => `
                     px-4 py-2 text-sm font-medium rounded-md transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#7b1113]
+                    focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#006F44]
                     ${isActive ? 'bg-white/10 text-white' : 'text-white/90 hover:text-white hover:bg-white/5'}
                   `}
                 >
@@ -41,7 +46,7 @@ export function PublicLayout() {
 
             <button
               type="button"
-              className="md:hidden p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#7b1113]"
+              className="md:hidden p-2 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#006F44]"
               aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'}
               aria-expanded={mobileOpen}
               aria-controls="public-mobile-menu"
@@ -66,7 +71,7 @@ export function PublicLayout() {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) => `
                     block px-4 py-3 text-base font-medium rounded-md transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#7b1113]
+                    focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#006F44]
                     ${isActive ? 'bg-white/10 text-white' : 'text-white/90 hover:text-white hover:bg-white/5'}
                   `}
                 >

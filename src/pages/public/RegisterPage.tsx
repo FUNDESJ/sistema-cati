@@ -378,7 +378,7 @@ export function RegisterPage() {
               flex items-start gap-4 p-5 rounded-lg border-2 cursor-pointer transition-colors
               ${errors.acceptDeclaration
                 ? 'border-[#a61b1b] bg-[#fbeaea]'
-                : 'border-[#d8d8d8] bg-[#fafafa] hover:border-[#7b1113] hover:bg-[#fdf0f0]'
+                : 'border-[#d8d8d8] bg-[#fafafa] hover:border-[#006F44] hover:bg-[#e8f3ee]'
               }
             `}
           >
@@ -386,7 +386,7 @@ export function RegisterPage() {
               {...register('acceptDeclaration')}
               id="accept-declaration"
               type="checkbox"
-              className="mt-1 h-6 w-6 flex-shrink-0 rounded border-[#b8b8b8] text-[#7b1113] accent-[#7b1113] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+              className="mt-1 h-6 w-6 flex-shrink-0 rounded border-[#b8b8b8] text-[#006F44] accent-[#006F44] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
               aria-invalid={errors.acceptDeclaration ? 'true' : 'false'}
               aria-describedby={errors.acceptDeclaration ? 'accept-declaration-error' : undefined}
             />

@@ -26,7 +26,7 @@ export function RulesPage() {
             'CPF válido e único por participante (a inscrição mais recente prevalece em caso de duplicidade).',
           ].map((item) => (
             <li key={item} className="flex gap-3 text-[0.9375rem] text-[#3d3d3d] leading-relaxed">
-              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#7b1113] mt-2" aria-hidden="true" />
+              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#006F44] mt-2" aria-hidden="true" />
               {item}
             </li>
           ))}
@@ -39,7 +39,7 @@ export function RulesPage() {
         </h2>
         <div className="grid md:grid-cols-2 gap-px bg-[#e5e5e5]">
           <div className="bg-white px-6 py-5">
-            <h3 className="text-base font-semibold text-[#7b1113]">Grupo 1 — Atividades Físicas</h3>
+            <h3 className="text-base font-semibold text-[#006F44]">Grupo 1 — Atividades Físicas</h3>
             <ul className="mt-3 space-y-1.5 text-[0.9375rem] text-[#3d3d3d]">
               <li>Dança de Salão</li>
               <li>Dança Ritmos</li>
@@ -51,7 +51,7 @@ export function RulesPage() {
             </ul>
           </div>
           <div className="bg-white px-6 py-5">
-            <h3 className="text-base font-semibold text-[#7b1113]">Grupo 2 — Atividades Socioeducativas</h3>
+            <h3 className="text-base font-semibold text-[#006F44]">Grupo 2 — Atividades Socioeducativas</h3>
             <ul className="mt-3 space-y-1.5 text-[0.9375rem] text-[#3d3d3d]">
               <li>Teatro</li>
               <li>Canto</li>
@@ -98,7 +98,7 @@ export function RulesPage() {
             'A classificação é independente por grupo — um participante pode ser classificado em um grupo e em lista de espera no outro.',
           ].map((item) => (
             <li key={item} className="flex gap-3 text-[0.9375rem] text-[#3d3d3d] leading-relaxed">
-              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#7b1113] mt-2" aria-hidden="true" />
+              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#006F44] mt-2" aria-hidden="true" />
               {item}
             </li>
           ))}
@@ -108,12 +108,12 @@ export function RulesPage() {
       <div className="text-center">
         <Link
           to="/inscricao"
-          className="inline-flex items-center gap-2.5 min-h-[48px] px-8 py-3 text-base font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] active:bg-[#450a0c] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+          className="inline-flex items-center gap-2.5 min-h-[48px] px-8 py-3 text-base font-semibold rounded-md bg-[#006F44] text-white hover:bg-[#005A37] active:bg-[#00452A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
         >
           Fazer Inscrição
         </Link>
         <p className="mt-3 text-sm text-[#595959]">
-          Ou <Link to="/inscricao" className="font-medium text-[#7b1113] hover:underline">veja o formulário completo</Link>
+          Ou <Link to="/inscricao" className="font-medium text-[#006F44] hover:underline">veja o formulário completo</Link>
         </p>
       </div>
     </div>

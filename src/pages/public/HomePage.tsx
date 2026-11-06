@@ -12,7 +12,7 @@ export function HomePage() {
     <div className="space-y-10">
       <section>
         <h1 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] tracking-tight">
-          Inscrições e Sorteios <span className="text-[#7b1113]">CATI 2027</span>
+          Inscrições e Sorteios <span className="text-[#006F44]">CATI 2027</span>
         </h1>
         <p className="mt-3 text-base sm:text-lg text-[#3d3d3d] max-w-2xl leading-relaxed">
           Centro de Atendimento à Terceira Idade — processo seletivo para atividades físicas e socioeducativas.
@@ -20,14 +20,14 @@ export function HomePage() {
         <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:items-center gap-3">
           <Link
             to="/inscricao"
-            className="inline-flex items-center gap-2 min-h-[48px] w-full sm:w-auto px-6 py-3 text-base font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] active:bg-[#450a0c] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 justify-center"
+            className="inline-flex items-center gap-2 min-h-[48px] w-full sm:w-auto px-6 py-3 text-base font-semibold rounded-md bg-[#006F44] text-white hover:bg-[#005A37] active:bg-[#00452A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2 justify-center"
           >
             Fazer Inscrição
             <ArrowRight className="h-5 w-5" aria-hidden="true" />
           </Link>
           <Link
             to="/inscricao/regras"
-            className="inline-flex items-center gap-2 min-h-[48px] w-full sm:w-auto px-6 py-3 text-base font-semibold rounded-md border border-[#d8d8d8] text-[#1a1a1a] bg-white hover:bg-[#fafafa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2 justify-center"
+            className="inline-flex items-center gap-2 min-h-[48px] w-full sm:w-auto px-6 py-3 text-base font-semibold rounded-md border border-[#d8d8d8] text-[#1a1a1a] bg-white hover:bg-[#fafafa] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2 justify-center"
           >
             Ver regras completas
           </Link>
@@ -69,7 +69,7 @@ export function HomePage() {
           ].map((step, i) => (
             <li key={step.label} className="flex gap-4 items-start">
               <span
-                className="flex-shrink-0 w-8 h-8 rounded-md bg-[#7b1113] text-white flex items-center justify-center text-base font-bold"
+                className="flex-shrink-0 w-8 h-8 rounded-md bg-[#006F44] text-white flex items-center justify-center text-base font-bold"
                 aria-hidden="true"
               >
                 {i + 1}
@@ -86,13 +86,13 @@ export function HomePage() {
       <section className="text-center">
         <Link
           to="/inscricao"
-          className="inline-flex items-center gap-2.5 min-h-[48px] px-8 py-3 text-base font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] active:bg-[#450a0c] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+          className="inline-flex items-center gap-2.5 min-h-[48px] px-8 py-3 text-base font-semibold rounded-md bg-[#006F44] text-white hover:bg-[#005A37] active:bg-[#00452A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
         >
           Fazer Inscrição
           <ArrowRight className="h-5 w-5" aria-hidden="true" />
         </Link>
         <p className="mt-3 text-sm text-[#595959]">
-          Ou <Link to="/inscricao/regras" className="font-medium text-[#7b1113] hover:underline">consulte as regras completas</Link>
+          Ou <Link to="/inscricao/regras" className="font-medium text-[#006F44] hover:underline">consulte as regras completas</Link>
         </p>
       </section>
     </div>

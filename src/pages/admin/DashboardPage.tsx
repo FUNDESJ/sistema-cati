@@ -16,12 +16,12 @@ function StatItem({ label, value, href }: StatItemProps) {
   return (
     <Link
       to={href}
-      className="group block border border-[#d8d8d8] bg-white hover:border-[#7b1113] transition-colors"
+      className="group block border border-[#d8d8d8] bg-white hover:border-[#006F44] transition-colors"
     >
       <div className="px-5 py-6">
         <p className="text-sm font-medium text-[#595959]">{label}</p>
         <p className="mt-2 text-3xl sm:text-4xl font-bold text-[#1a1a1a] tracking-tight">{value}</p>
-        <p className="mt-3 text-sm font-medium text-[#7b1113] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+        <p className="mt-3 text-sm font-medium text-[#006F44] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
           Abrir <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </p>
       </div>
@@ -94,25 +94,25 @@ export function DashboardPage() {
         <div className="mt-4 flex flex-col sm:flex-row gap-3">
           <Link
             to="/admin/inscricoes"
-            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md border border-[#7b1113] text-[#7b1113] bg-white hover:bg-[#fdf0f0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md border border-[#006F44] text-[#006F44] bg-white hover:bg-[#e8f3ee] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
           >
             Gerenciar Inscrições
           </Link>
           <Link
             to="/admin/turmas"
-            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md border border-[#7b1113] text-[#7b1113] bg-white hover:bg-[#fdf0f0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md border border-[#006F44] text-[#006F44] bg-white hover:bg-[#e8f3ee] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
           >
             Gerenciar Turmas
           </Link>
           <Link
             to="/admin/sorteios"
-            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md bg-[#7b1113] text-white hover:bg-[#5c0d0f] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md bg-[#006F44] text-white hover:bg-[#005A37] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
           >
             Realizar Sorteios
           </Link>
           <Link
             to="/admin/resultados"
-            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md border border-[#d8d8d8] text-[#3d3d3d] bg-white hover:bg-[#f4f4f4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-2"
+            className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 text-sm font-semibold rounded-md border border-[#d8d8d8] text-[#3d3d3d] bg-white hover:bg-[#f4f4f4] transition-colors focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-2"
           >
             Ver Resultados
           </Link>

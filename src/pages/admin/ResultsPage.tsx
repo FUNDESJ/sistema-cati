@@ -178,9 +178,9 @@ export function ResultsPage() {
               onClick={() => setViewMode(tab.id)}
               className={`
                 px-4 py-3 text-sm font-semibold border-b-2 transition-colors
-                focus:outline-none focus:ring-2 focus:ring-[#7b1113] focus:ring-offset-1
+                focus:outline-none focus:ring-2 focus:ring-[#006F44] focus:ring-offset-1
                 ${viewMode === tab.id
-                  ? 'border-[#7b1113] text-[#7b1113] -mb-px'
+                  ? 'border-[#006F44] text-[#006F44] -mb-px'
                   : 'border-transparent text-[#3d3d3d] hover:text-[#1a1a1a] hover:bg-[#f4f4f4]'
                 }
               `}
