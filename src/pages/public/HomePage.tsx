@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 export function HomePage() {
   const periodStart = '05/01/2027';
   const periodEnd = '08/01/2027';
-  const drawDate = '03/02/2027';
+  const drawDate = '01/02/2027';
 
   return (
     <div className="space-y-10">
