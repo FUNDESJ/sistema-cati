@@ -2,11 +2,9 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 export function HomePage() {
-  const periodStart = '10/12/2026';
-  const periodEnd = '15/12/2026';
-  const drawDate = '01/02/2027';
-  const plantaoStart = '05/01/2027';
-  const plantaoEnd = '08/01/2027';
+  const periodStart = '05/01/2027';
+  const periodEnd = '08/01/2027';
+  const drawDate = '03/02/2027';
 
   return (
     <div className="space-y-10">
@@ -42,19 +40,14 @@ export function HomePage() {
             <p className="mt-1 text-sm text-[#595959]">As inscrições são realizadas exclusivamente online.</p>
           </div>
           <div className="bg-white p-5 sm:p-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[#595959]">Plantão Presencial</h2>
-            <p className="mt-3 text-lg font-semibold text-[#1a1a1a]">De {plantaoStart} a {plantaoEnd}</p>
-            <p className="mt-1 text-sm text-[#595959]">Inscrição presencial na sede do CATI.</p>
-          </div>
-          <div className="bg-white p-5 sm:p-6">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[#595959]">Quem pode se inscrever</h2>
             <p className="mt-3 text-lg font-semibold text-[#1a1a1a]">60 anos ou mais até 05/01/2027</p>
             <p className="mt-1 text-sm text-[#595959]">Prioridade para pessoas com 80 anos ou mais.</p>
           </div>
           <div className="bg-white p-5 sm:p-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[#595959]">Sorteio Eletrônico</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[#595959]">Divulgação do Sorteio</h2>
             <p className="mt-3 text-lg font-semibold text-[#1a1a1a]">{drawDate}</p>
-            <p className="mt-1 text-sm text-[#595959]">Realizado eletronicamente pela equipe do CATI.</p>
+            <p className="mt-1 text-sm text-[#595959]">Resultado divulgado nesta página.</p>
           </div>
         </div>
       </section>
