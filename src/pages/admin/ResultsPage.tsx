@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore, useState } from 'react';
 import { Download, Clock, CheckCircle, Shuffle, Eye, AlertCircle } from 'lucide-react';
 import { getDrawResult, hasDrawResult, refreshDrawResults } from '../../services/drawService';
+import { buildGeneralClassification } from '../../domain/draw';
 import { exportDrawResultXlsx } from '../../services/exportService';
 import { getState, subscribe } from '../../store';
 import { ApiError } from '../../services/api';
@@ -20,6 +21,7 @@ const GROUP_LABELS: Record<1 | 2, string> = {
 
 interface EnrichedClassified {
   position: number;
+  generalRank: number;
   registrationId: string;
   participantName: string;
   isPriority80: boolean;
@@ -30,6 +32,7 @@ interface EnrichedClassified {
 
 interface EnrichedWaiting {
   position: number;
+  generalRank: number;
   registrationId: string;
   participantName: string;
   isPriority80: boolean;
@@ -88,9 +91,14 @@ export function ResultsPage() {
     );
   }
 
+  // Classificação geral (1..n) derivada do resultado registrado — sem
+  // regenerar aleatoriedade e sem alterar o resultado (ver domain/draw).
+  const generalRanking = result ? buildGeneralClassification(result) : new Map<string, number>();
+
   const allClassified: EnrichedClassified[] = result?.workshops.flatMap((w) =>
     w.classified.map((c) => ({
       position: c.position,
+      generalRank: generalRanking.get(c.registrationId) ?? 0,
       registrationId: c.registrationId,
       participantName: c.participantName,
       isPriority80: c.isPriority80,
@@ -103,6 +111,7 @@ export function ResultsPage() {
   const allWaiting: EnrichedWaiting[] = result?.workshops.flatMap((w) =>
     w.waitingList.map((c) => ({
       position: c.position,
+      generalRank: generalRanking.get(c.registrationId) ?? 0,
       registrationId: c.registrationId,
       participantName: c.participantName,
       isPriority80: c.isPriority80,
@@ -265,6 +274,7 @@ export function ResultsPage() {
           <Table
             columns={[
               { key: 'position', header: 'Pos.', render: (e: EnrichedClassified) => <span className="font-mono text-[#595959]">{e.position}</span> },
+              { key: 'generalRank', header: 'Classificação Geral', render: (e: EnrichedClassified) => <span className="font-mono font-semibold text-[#1a1a1a]">{e.generalRank}</span> },
               { key: 'registrationId', header: 'Inscrição', render: (e: EnrichedClassified) => <code className="text-sm">{e.registrationId}</code> },
               { key: 'participantName', header: 'Nome', render: (e: EnrichedClassified) => <p className="font-semibold text-[#1a1a1a]">{e.participantName}</p> },
               { key: 'workshopName', header: 'Atividade', render: (e: EnrichedClassified) => e.workshopName },
@@ -284,6 +294,7 @@ export function ResultsPage() {
           <Table
             columns={[
               { key: 'position', header: 'Pos.', render: (e: EnrichedWaiting) => <span className="font-mono text-[#595959]">{e.position}</span> },
+              { key: 'generalRank', header: 'Classificação Geral', render: (e: EnrichedWaiting) => <span className="font-mono font-semibold text-[#1a1a1a]">{e.generalRank}</span> },
               { key: 'registrationId', header: 'Inscrição', render: (e: EnrichedWaiting) => <code className="text-sm">{e.registrationId}</code> },
               { key: 'participantName', header: 'Nome', render: (e: EnrichedWaiting) => <p className="font-semibold text-[#1a1a1a]">{e.participantName}</p> },
               { key: 'workshopName', header: 'Atividade', render: (e: EnrichedWaiting) => e.workshopName },

@@ -307,3 +307,40 @@ export function runDrawForGroup(
     workshops: results,
   };
 }
+
+/**
+ * Classificação geral do grupo (1..n), DERIVADA do resultado já gravado.
+ *
+ * O sorteio não registra um número de ponto flutuante por participante: o
+ * shuffle (Fisher–Yates) consome o stream do RNG por troca, sem atribuir
+ * um valor a cada candidato. O que fica REGISTRADO é a ordem aleatória
+ * produzida: as turmas no array `workshops` na ordem em que foram
+ * sorteadas e, dentro de cada turma, os candidatos na ordem do sorteio.
+ *
+ * Esta função percorre exatamente essa ordem registrada — a mesma em que
+ * o RNG foi consumido no momento do sorteio — e atribui 1..n sequenciais:
+ * 1 para o primeiro candidato alcançado pela aleatoriedade, 2 para o
+ * seguinte, e assim por diante.
+ *
+ * Restrições respeitadas: NÃO altera a lógica do sorteio, NÃO gera
+ * números aleatórios novos e NÃO modifica o resultado — é uma leitura
+ * derivada, aplicável também a sorteios executados antes desta função.
+ *
+ * Observação de semântica: como a precedência 80+ vale DENTRO de cada
+ * turma, a ordem geral entre turmas reflete a ordem de execução do
+ * sorteio (a mesma registrada no resultado) — não é uma nova regra de
+ * prioridade entre turmas.
+ */
+export function buildGeneralClassification(
+  result: DrawResult,
+): Map<string, number> {
+  const ranking = new Map<string, number>();
+  let rank = 0;
+  for (const workshop of result.workshops) {
+    for (const entry of [...workshop.classified, ...workshop.waitingList]) {
+      rank += 1;
+      ranking.set(entry.registrationId, rank);
+    }
+  }
+  return ranking;
+}

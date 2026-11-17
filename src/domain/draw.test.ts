@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Registration, Workshop } from '../types';
-import { getEligibleRegistrations, runDrawForGroup, shuffle } from './draw';
+import { buildGeneralClassification, getEligibleRegistrations, runDrawForGroup, shuffle } from './draw';
 
 function seededRng(seed: number): () => number {
   let state = seed;
@@ -408,5 +408,66 @@ describe('runDrawForGroup — prioridade 80+ (mecanismo operacional)', () => {
     expect(classified.find((e) => e.participantName === 'Exatamente 80')?.isPriority80).toBe(true);
     expect(classified.find((e) => e.participantName === 'Um Dia a Menos')?.isPriority80).toBe(false);
     expect(result.priority!.candidates).toBe(1);
+  });
+});
+
+describe('buildGeneralClassification — classificação geral derivada do resultado', () => {
+  it('atribui 1..n sequenciais na ordem registrada (turmas na ordem do array, posição dentro da turma)', () => {
+    const result = runDrawForGroup(
+      [
+        makeRegistration({ id: 'a1', participant: { ...makeRegistration({}).participant, name: 'A1', cpf: makeValidCpf(10) } }),
+        makeRegistration({ id: 'a2', participant: { ...makeRegistration({}).participant, name: 'A2', cpf: makeValidCpf(11) } }),
+        makeRegistration({ id: 'a3', participant: { ...makeRegistration({}).participant, name: 'A3', cpf: makeValidCpf(12) } }),
+        makeRegistration({ id: 'b1', group1WorkshopId: 't002', participant: { ...makeRegistration({}).participant, name: 'B1', cpf: makeValidCpf(13) } }),
+        makeRegistration({ id: 'b2', group1WorkshopId: 't002', participant: { ...makeRegistration({}).participant, name: 'B2', cpf: makeValidCpf(14) } }),
+      ],
+      [makeWorkshop({ id: 't001', vacancies: 1 }), makeWorkshop({ id: 't002', vacancies: 2 })],
+      1,
+      seededRng(42),
+    );
+
+    const ranking = buildGeneralClassification(result);
+
+    // Todos os candidatos do grupo recebem um número, sem repetição
+    expect(ranking.size).toBe(5);
+    expect([...ranking.values()].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
+
+    // Ordem registrada: primeira turma (todas as entradas, na ordem do
+    // sorteio) precede a segunda turma
+    const firstWorkshopEntries = [
+      ...result.workshops[0].classified,
+      ...result.workshops[0].waitingList,
+    ];
+    const secondWorkshopEntries = [
+      ...result.workshops[1].classified,
+      ...result.workshops[1].waitingList,
+    ];
+    const maxRankFirst = Math.max(...firstWorkshopEntries.map((e) => ranking.get(e.registrationId)!));
+    const minRankSecond = Math.min(...secondWorkshopEntries.map((e) => ranking.get(e.registrationId)!));
+    expect(maxRankFirst).toBeLessThan(minRankSecond);
+
+    // Dentro da turma, a posição registrada é respeitada (1 do sorteio = melhor geral)
+    expect(ranking.get(result.workshops[0].classified[0].registrationId)).toBe(1);
+  });
+
+  it('inclui classificados e lista de espera; não modifica o resultado', () => {
+    const result = runDrawForGroup(
+      Array.from({ length: 5 }, (_, i) =>
+        makeRegistration({ id: `p${i + 1}`, participant: { ...makeRegistration({}).participant, name: `P${i + 1}`, cpf: makeValidCpf(20 + i) } }),
+      ),
+      [makeWorkshop({ vacancies: 2 })],
+      1,
+      seededRng(7),
+    );
+
+    const before = JSON.stringify(result);
+    const ranking = buildGeneralClassification(result);
+    const after = JSON.stringify(result);
+
+    expect(after).toBe(before);
+    expect(ranking.size).toBe(result.totalCandidates);
+    // 2 classificados + 3 em espera = 5 posições contíguas
+    expect(ranking.size).toBe(5);
+    expect([...ranking.values()].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
   });
 });
