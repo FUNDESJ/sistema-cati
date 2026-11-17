@@ -327,7 +327,7 @@ export function RegisterPage() {
             >
               <Info className={`h-5 w-5 flex-shrink-0 ${isPriority ? 'text-[#8a5a00]' : 'text-[#1f4d6b]'}`} aria-hidden="true" />
               <p className="text-base font-medium text-[#1a1a1a]">
-                Idade na data de referência (05/01/2027): <strong>{age} anos</strong>
+                Idade na data de referência (05/02/2027): <strong>{age} anos</strong>
                 {isPriority && (
                   <> — <strong className="text-[#8a5a00]">Prioridade 80+</strong></>
                 )}
@@ -422,7 +422,7 @@ export function RegisterPage() {
       </form>
 
       <div className="mt-8 p-5 bg-[#fafafa] border border-[#d8d8d8] rounded-lg text-base text-[#3d3d3d] space-y-2.5">
-        <p><strong>Data de referência para cálculo de idade:</strong> 05/01/2027</p>
+        <p><strong>Data de referência para cálculo de idade:</strong> 05/02/2027</p>
         <p><strong>Idade mínima:</strong> 60 anos completos até a data de referência</p>
         <p><strong>Prioridade:</strong> Pessoas com 80 anos ou mais têm prioridade no sorteio</p>
         <p><strong>Uma inscrição por CPF:</strong> A mais recente prevalece em caso de duplicidade</p>

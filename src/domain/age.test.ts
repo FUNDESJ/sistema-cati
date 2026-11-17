@@ -37,19 +37,20 @@ describe('calculateAge', () => {
   });
 
   it('no dia exato do aniversário já conta a idade completa', () => {
-    expect(calculateAge(new Date(1950, 0, 5), REFERENCE_DATE)).toBe(77);
+    expect(calculateAge(new Date(1950, 1, 5), REFERENCE_DATE)).toBe(77);
   });
 
   it('um dia antes do aniversário ainda não conta', () => {
-    expect(calculateAge(new Date(1950, 0, 4), REFERENCE_DATE)).toBe(77);
+    // Nascido em 06/02: na referência de 05/02 ainda não completou a idade
+    expect(calculateAge(new Date(1950, 1, 6), REFERENCE_DATE)).toBe(76);
   });
 });
 
 describe('ageAtReferenceDate', () => {
-  it('calcula a partir da data de referência de 05/01/2027', () => {
+  it('calcula a partir da data de referência de 05/02/2027', () => {
     expect(ageAtReferenceDate('1946-12-20')).toBe(80);
-    expect(ageAtReferenceDate('1947-01-04')).toBe(80);
-    expect(ageAtReferenceDate('1947-01-05')).toBe(80);
+    expect(ageAtReferenceDate('1947-02-06')).toBe(79);
+    expect(ageAtReferenceDate('1947-02-05')).toBe(80);
   });
 
   it('retorna null para data inválida', () => {

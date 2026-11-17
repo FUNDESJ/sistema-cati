@@ -87,7 +87,7 @@ export interface DrawEligibilityIssue {
  *    nasce homologada; o filtro permanece como defesa para registros
  *    legados do fluxo antigo de homologação);
  * 3. Escolheu uma turma neste grupo;
- * 4. Tem 60+ anos na data de referência 05/01/2027 (defesa em
+ * 4. Tem 60+ anos na data de referência 05/02/2027 (defesa em
  *    profundidade: o formulário já valida, mas a regra pertence ao domínio).
  *
  * Violações de idade em inscrições homologadas são devolvidas em `issues`
@@ -125,7 +125,7 @@ export function getEligibleRegistrations(
  * Verifica se o candidato tem direito à prioridade 80+.
  *
  * A condição é SEMPRE derivada da data de nascimento comparada à data de
- * referência (05/01/2027) — nunca declarada manualmente, garantindo que
+ * referência (05/02/2027) — nunca declarada manualmente, garantindo que
  * o que aparece na interface reflita exatamente a lógica de negócio.
  */
 function isPriority80(registration: Registration): boolean {

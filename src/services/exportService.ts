@@ -10,6 +10,15 @@ export async function exportRegistrationsCsv(): Promise<void> {
 }
 
 /**
+ * Exporta todos os inscritos em PDF pronto para impressão (A4 paisagem),
+ * gerado pelo servidor: nome, nascimento, CPF mascarado (LGPD) e as
+ * atividades de cada inscrito — sem status nem data de homologação.
+ */
+export async function exportRegistrationsPdf(): Promise<void> {
+  await apiDownload('/admin/registrations/export.pdf', `inscritos-cati-${todaySuffix()}.pdf`);
+}
+
+/**
  * Exporta o resultado vigente do sorteio do grupo em planilha (.xlsx)
  * gerada pelo servidor: uma ABA por turma (classificados + lista de
  * espera), além de Resumo e Classificação Geral — pronta para abrir no

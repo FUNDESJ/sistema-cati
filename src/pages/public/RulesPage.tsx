@@ -20,7 +20,7 @@ export function RulesPage() {
         </h2>
         <ul className="px-6 py-5 space-y-4">
           {[
-            'Ter 60 anos ou mais até a data de referência: 05/01/2027.',
+            'Ter 60 anos ou mais até a data de referência: 05/02/2027.',
             'A idade é calculada considerando o dia, mês e ano de nascimento (não apenas a diferença de anos).',
             'Pessoas com 80 anos ou mais têm prioridade no sorteio.',
             'CPF válido e único por participante (a inscrição mais recente prevalece em caso de duplicidade).',

@@ -41,7 +41,7 @@ export function HomePage() {
           </div>
           <div className="bg-white p-5 sm:p-6">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[#595959]">Quem pode se inscrever</h2>
-            <p className="mt-3 text-lg font-semibold text-[#1a1a1a]">60 anos ou mais até 05/01/2027</p>
+            <p className="mt-3 text-lg font-semibold text-[#1a1a1a]">60 anos ou mais até 05/02/2027</p>
             <p className="mt-1 text-sm text-[#595959]">Prioridade para pessoas com 80 anos ou mais.</p>
           </div>
           <div className="bg-white p-5 sm:p-6">

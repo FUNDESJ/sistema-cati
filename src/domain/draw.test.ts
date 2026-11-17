@@ -250,7 +250,7 @@ describe('runDrawForGroup — prioridade 80+ (mecanismo operacional)', () => {
       id: `p80-${index}`,
       participant: {
         ...makeRegistration({}).participant,
-        birthDate: '1940-01-01', // 86 anos na referência 05/01/2027
+        birthDate: '1940-01-01', // 87 anos na referência 05/02/2027
         name: name ?? `Prioritário ${index}`,
         cpf: makeValidCpf(500 + index),
       },
@@ -380,22 +380,22 @@ describe('runDrawForGroup — prioridade 80+ (mecanismo operacional)', () => {
   });
 
   it('isPriority80 é derivado da idade na referência, não da ordem de chegada', () => {
-    // Nasce em 05/01/1947 → completa 80 anos EXATAMENTE na data de referência
+    // Nasce em 05/02/1947 → completa 80 anos EXATAMENTE na data de referência
     const exactly80 = makeRegistration({
       id: 'exato-80',
       participant: {
         ...makeRegistration({}).participant,
-        birthDate: '1947-01-05',
+        birthDate: '1947-02-05',
         cpf: makeValidCpf(900),
         name: 'Exatamente 80',
       },
     });
-    // Nasce em 06/01/1947 → 79 anos e 364 dias na referência
+    // Nasce em 06/02/1947 → 79 anos e 364 dias na referência
     const oneDayShort = makeRegistration({
       id: 'um-dia-a-menos',
       participant: {
         ...makeRegistration({}).participant,
-        birthDate: '1947-01-06',
+        birthDate: '1947-02-06',
         cpf: makeValidCpf(901),
         name: 'Um Dia a Menos',
       },

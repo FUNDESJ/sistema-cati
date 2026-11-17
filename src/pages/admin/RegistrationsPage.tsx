@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useSyncExternalStore, useState } from 'react';
-import { Eye, Download, AlertCircle, FilterX } from 'lucide-react';
+import { Eye, Download, FileText, AlertCircle, FilterX } from 'lucide-react';
 import { subscribe, getState } from '../../store';
 import { refreshRegistrations } from '../../services/registrationService';
 import { getWorkshopById, listWorkshops, refreshAdminWorkshops } from '../../services/classService';
-import { exportRegistrationsCsv } from '../../services/exportService';
+import { exportRegistrationsCsv, exportRegistrationsPdf } from '../../services/exportService';
 import { ApiError } from '../../services/api';
 import { Table } from '../../components/ui/Table';
 import { Input } from '../../components/ui/Input';
@@ -66,7 +66,7 @@ export function RegistrationsPage() {
   const [groupFilter, setGroupFilter] = useState<GroupFilter>('all');
   const [activityFilter, setActivityFilter] = useState('all');
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
-  const [exporting, setExporting] = useState(false);
+  const [exporting, setExporting] = useState<'csv' | 'pdf' | false>(false);
   const [loading, setLoading] = useState(state.registrations.length === 0);
   const [mutationError, setMutationError] = useState<string | null>(null);
 
@@ -124,11 +124,15 @@ export function RegistrationsPage() {
     setActivityFilter('all');
   };
 
-  const handleExport = async () => {
-    setExporting(true);
+  const handleExport = async (format: 'csv' | 'pdf') => {
+    setExporting(format);
     setMutationError(null);
     try {
-      await exportRegistrationsCsv();
+      if (format === 'csv') {
+        await exportRegistrationsCsv();
+      } else {
+        await exportRegistrationsPdf();
+      }
     } catch (error) {
       setMutationError(mutationErrorMessage(error));
     } finally {
@@ -207,9 +211,26 @@ export function RegistrationsPage() {
           <h1 className="text-2xl font-bold text-[#1a1a1a] tracking-tight">Inscrições</h1>
           <p className="mt-1 text-sm text-[#595959]">Inscrições concluídas — aptas automaticamente para o sorteio</p>
         </div>
-        <Button variant="secondary" onClick={handleExport} loading={exporting} leftIcon={<Download className="h-4 w-4" />}>
-          Exportar CSV
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="secondary"
+            onClick={() => handleExport('pdf')}
+            loading={exporting === 'pdf'}
+            disabled={exporting !== false}
+            leftIcon={<FileText className="h-4 w-4" />}
+          >
+            Exportar PDF (impressão)
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => handleExport('csv')}
+            loading={exporting === 'csv'}
+            disabled={exporting !== false}
+            leftIcon={<Download className="h-4 w-4" />}
+          >
+            Exportar CSV
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4 bg-[#fafafa] border border-[#d8d8d8] rounded-lg p-4">

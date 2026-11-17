@@ -1,4 +1,5 @@
-export const REFERENCE_DATE = new Date(2027, 0, 5);
+/** Data de referência para elegibilidade: a pessoa precisa ter 60 anos completos em 05/02/2027. */
+export const REFERENCE_DATE = new Date(2027, 1, 5);
 
 export const MIN_ELIGIBLE_AGE = 60;
 export const PRIORITY_AGE = 80;
